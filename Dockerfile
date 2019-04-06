@@ -3,6 +3,11 @@
 FROM node:10
 WORKDIR /usr/src/app
 
+# https://github.com/ytdl-org/youtube-dl
+# the base node docker image includes python
+RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+RUN chmod a+rx /usr/local/bin/youtube-dl
+
 # install deps first to take advantage of layer caching
 COPY package*.json ./
 RUN npm install
