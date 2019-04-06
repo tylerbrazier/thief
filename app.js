@@ -7,4 +7,4 @@ app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => res.render('index'))
 
-app.listen(conf.port, () => console.log(`Listening on port ${conf.port}`))
+app.listen(conf.PORT, () => console.log(`Listening on port ${conf.PORT}`))
