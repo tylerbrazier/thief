@@ -18,9 +18,40 @@ module.exports = function route (req, res, next) {
 
       if (!json) return next('JSON parse returned empty: ' + json)
 
-      res.send(json)
+      if (json._type === 'playlist') {
+        return res.status(400).send('downloading playlist is not supported yet')
+      }
+
+      res.render('download', getMetadata(url, json))
     } catch (err) {
       return next(err)
     }
   })
+}
+
+function getMetadata (url, json) {
+  const { track, artist } = json
+  const type = (track || artist ? 'mp3' : 'webm')
+
+  return {
+    url: url,
+    track: track || '',
+    artist: artist || '',
+    filename: getFilename(track, artist, json.title, type),
+    type: type
+  }
+}
+
+function getFilename (track, artist, title, type) {
+  if (track || artist) {
+    return `${sanitize(artist)}-${sanitize(track)}.${type}`
+  } else {
+    return `${sanitize(title)}.${type}`
+  }
+}
+
+// replace spaces with underscore and remove anything besides
+// alphanumerics, underscores, dots, and dashes
+function sanitize (str) {
+  return str.replace(/[^\w\s.-]/g, '').replace(/\s+/g, '_')
 }

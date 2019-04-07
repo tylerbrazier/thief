@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!--
+      mobile friendly
+      https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag
+      https://developers.google.com/web/fundamentals/design-and-ux/responsive/
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Thief</title>
+  </head>
+  <body>
+    <form action="/download" method="post">
+      <div>
+        <label for="url">Youtube URL</label>
+        <input type="text" id="url" name="url" value="<%= url %>">
+      </div>
+      <div>
+        <label for="artist">Artist</label>
+        <input type="text" id="artist" name="artist" value="<%= artist %>">
+      </div>
+      <div>
+        <label for="Track">Track</label>
+        <input type="text" id="track" name="track" value="<%= track %>">
+      </div>
+      <div>
+        <label for="filename">Filename</label>
+        <input type="text" id="filename" name="filename" value="<%= filename %>">
+      </div>
+      <div>
+        <input type="radio" id="mp3" name="type" value="mp3" <% if(type === 'mp3') { %> checked <% } %>>
+        <label for="mp3">mp3</label>
+
+        <input type="radio" id="webm" name="type" value="webm" <% if(type === 'webm') { %> checked <% } %>>
+        <label for="webm">webm</label>
+      </div>
+      <div>
+        <button type="submit">Download</button>
+      </div>
+    </form>
+  </body>
+</html>
