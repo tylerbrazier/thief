@@ -20,7 +20,7 @@ To build the docker image and run the container locally:
 To build and deploy on heroku (production):
 
     # after `heroku login` and such
-    heroku container:push web -t tubethief
-    heroku container:release web -t tubethief
+    heroku container:push web -a tubethief
+    heroku container:release web -a tubethief
 
 <https://devcenter.heroku.com/articles/free-dyno-hours>
