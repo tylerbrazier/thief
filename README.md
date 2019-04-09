@@ -19,6 +19,9 @@ To build the docker image and run the container locally:
 
 To build and deploy on heroku (production):
 
+    npm run lint
+    npm version <major|minor|patch> -m 'v%s'
+
     # after `heroku login` and such
     heroku container:push web -a tubethief
     heroku container:release web -a tubethief
