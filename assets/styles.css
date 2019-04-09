@@ -9,6 +9,9 @@ form > div {
 input[type=text] {
   width: 100%;
   padding: 4px;
+
+  /* prevent field from running off the end of the page (https://stackoverflow.com/a/46991460) */
+  box-sizing: border-box;
 }
 
 button {
