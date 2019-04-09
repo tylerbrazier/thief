@@ -17,4 +17,6 @@ app.post('/probe', probeRoute)
 app.use('/download', bodyParser.urlencoded({ extended: true }))
 app.post('/download', downloadRoute)
 
+app.use('/assets', express.static('assets'))
+
 app.listen(conf.PORT, () => console.log(`Listening on port ${conf.PORT}`))

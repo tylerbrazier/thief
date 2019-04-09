@@ -1,0 +1,16 @@
+body {
+  max-width: 500px;
+}
+
+form > div {
+  margin-top: 10px;
+}
+
+input[type=text] {
+  width: 100%;
+  padding: 4px;
+}
+
+button {
+  padding: 4px;
+}
