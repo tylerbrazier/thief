@@ -8,6 +8,12 @@ module.exports = function route (req, res, next) {
 
   if (!url) return res.status(400).send('url is required')
 
+  try {
+    new URL(url)
+  } catch {
+    return res.status(400).send('invalid url')
+  }
+
   const cmd = 'youtube-dl -J ' + url
 
   console.log(`Getting metadata for ${url}...`)
@@ -23,7 +29,7 @@ module.exports = function route (req, res, next) {
       if (!json) return next('JSON parse returned empty: ' + json)
 
       if (json._type === 'playlist') {
-        return res.status(400).send('downloading playlist is not supported yet')
+        return res.status(400).send('downloading playlist is not supported')
       }
 
       res.render('form', getMetadata(url, json))

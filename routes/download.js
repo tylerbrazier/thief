@@ -15,7 +15,12 @@ module.exports = async function route (req, res, next) {
 
   const { url, format, artist, title } = body
   if (!url) return res.status(400).send('url is required')
-  if (format !== 'mp3') return res.status(400).send('only mp3 is supported right now')
+
+  try {
+    new URL(url)
+  } catch {
+    return res.status(400).send('invalid url')
+  }
 
   // basepath doesn't include extention because youtube-dl -o needs '.%(ext)s'
   const basepath = path.join(os.tmpdir(), filename)
@@ -36,10 +41,14 @@ module.exports = async function route (req, res, next) {
 }
 
 async function download (url, basepath, format) {
-  let cmd = 'youtube-dl -x --audio-quality 0 '
-  cmd += `--audio-format ${format} `
-  cmd += `-o '${basepath}.%(ext)s' `
-  cmd += `'${url}'`
+  let cmd = 'youtube-dl '
+
+  if (format === 'webm') {
+    cmd += '-f webm '
+  } else if (format === 'mp3') {
+    cmd += `-x --audio-quality 0 --audio-format ${format} `
+  }
+  cmd += `-o '${basepath}.%(ext)s' '${url}'`
 
   console.log(`Downloading ${url} -> ${basepath}.${format}`)
   const { stdout, stderr } = await exec(cmd)
