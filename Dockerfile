@@ -3,6 +3,10 @@
 FROM node:10
 WORKDIR /usr/src/app
 
+# needed for converting videos to mp3s
+# https://wiki.debian.org/ffmpeg
+RUN apt-get update && apt-get install -y libav-tools
+
 # https://github.com/ytdl-org/youtube-dl
 # the base node docker image includes python
 RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
