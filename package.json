@@ -1,6 +1,6 @@
 {
   "name": "thief",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Web service for downloading youtube videos and songs",
   "main": "app.js",
   "dependencies": {
