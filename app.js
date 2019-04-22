@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const conf = require('./conf.js')
 const prepareRoute = require('./routes/prepare.js')
 const downloadRoute = require('./routes/download.js')
+const updateRoute = require('./routes/update.js')
 
 const app = express()
 
@@ -16,6 +17,8 @@ app.post('/prepare', prepareRoute)
 
 app.use('/download', bodyParser.urlencoded({ extended: true }))
 app.post('/download', downloadRoute)
+
+app.post('/update', updateRoute)
 
 app.use('/assets', express.static('assets'))
 
