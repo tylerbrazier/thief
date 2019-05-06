@@ -21,7 +21,7 @@
         <input type="text" id="url" name="url" value="<%= url %>">
       </div>
       <div>
-        <label for="filename">Filename (excluding extension)</label>
+        <label for="filename">Filename (extension can be mp3 or webm)</label>
         <input type="text" id="filename" name="filename" value="<%= filename %>">
       </div>
       <div>
@@ -31,13 +31,6 @@
       <div>
         <label for="title">Title (for mp3 tag)</label>
         <input type="text" id="title" name="title" value="<%= title %>">
-      </div>
-      <div>
-        <input type="radio" id="mp3" name="format" value="mp3" <% if(format === 'mp3') { %> checked <% } %>>
-        <label for="mp3">mp3</label>
-
-        <input type="radio" id="webm" name="format" value="webm" <% if(format === 'webm') { %> checked <% } %>>
-        <label for="webm">webm</label>
       </div>
       <div>
         <button type="submit">Download</button>

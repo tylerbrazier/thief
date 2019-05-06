@@ -1,71 +1,66 @@
-const os = require('os')
-const path = require('path')
+const conf = require('../conf.js')
+const join = require('path').join
 const util = require('util')
 const id3 = require('node-id3')
-const sanitize = require('../sanitize.js')
-const exec = util.promisify(require('child_process').exec)
+const sanitize = require('../tools/sanitizer.js')
+const download = require('../tools/downloader.js')
+const progressNotifier = require('../tools/progressNotifier.js')
 
-module.exports = async function route (req, res, next) {
+module.exports = function route (req, res, next) {
   const body = req.body
   if (!body) return next('No body on request')
 
-  // filename doesn't include extension because youtube-dl -o needs '.%(ext)s'
   const filename = sanitize(body.filename)
   if (!filename) return res.status(400).send('filename is required')
+  if (!filename.endsWith('.mp3') && !filename.endsWith('.webm')) {
+    res.status(400).send('file extension must either be webm or mp3')
+  }
 
-  const { url, format, artist, title } = body
+  const { url, artist, title } = body
   if (!url) return res.status(400).send('url is required')
 
   try {
-    new URL(url)
-  } catch {
+    new URL(url) // eslint-disable-line no-new
+  } catch (err) {
     return res.status(400).send('invalid url')
   }
 
-  // basepath doesn't include extention because youtube-dl -o needs '.%(ext)s'
-  const basepath = path.join(os.tmpdir(), filename)
-  const fullpath = `${basepath}.${format}`
+  const path = join(conf.DEST, filename)
 
-  try {
-    await download(url, basepath, format)
+  const passthrough = { filename, artist, title }
 
-    if (format === 'mp3' && (artist || title)) {
-      await tag(fullpath, artist, title)
-    }
+  const downloadOptions = { url, path, passthrough, postdownload }
 
-    console.log(`Sending response ${fullpath}`)
-    res.download(fullpath)
-  } catch (err) {
-    return next(err)
-  }
-}
+  const downloadId = download(downloadOptions, progressNotifier.publish)
 
-async function download (url, basepath, format) {
-  let cmd = 'youtube-dl '
-
-  if (format === 'webm') {
-    cmd += '-f webm '
-  } else if (format === 'mp3') {
-    cmd += `-x --audio-quality 0 --audio-format ${format} `
-  }
-  cmd += `-o '${basepath}.%(ext)s' '${url}'`
-
-  console.log(`Downloading ${url} -> ${basepath}.${format}`)
-  const { stdout, stderr } = await exec(cmd)
-  if (stdout) console.log(stdout)
-  if (stderr) console.error(stderr)
-}
-
-function tag (file, artist, title) {
-  const meta = { title: title, artist: artist }
-
-  console.log(`Tagging ${file} with ${util.inspect(meta)}`)
-
-  // util.promisify doesn't seem to work on id3.write
-  return new Promise((resolve, reject) => {
-    id3.write(meta, file, (err) => {
-      if (err) return reject(err)
-      resolve()
-    })
+  // wire up logging
+  progressNotifier.subscribe(downloadId, (err, data) => {
+    const { stdout, stderr } = data
+    if (err) console.error(err)
+    if (stdout) process.stdout.write(stdout)
+    if (stderr) process.stderr.write(stderr)
+    if (data.done) console.log() // print final newline
   })
+
+  res.render('download', { eventSourceUrl: '/progress/' + downloadId })
+}
+
+// using data.passthrough, tag the filename with artist and title
+function postdownload (data, callback) {
+  const filename = data.passthrough.filename
+
+  if (!filename.endsWith('.mp3')) return callback()
+
+  const path = join(conf.DEST, filename)
+  const meta = {
+    artist: data.passthrough.artist,
+    title: data.passthrough.title
+  }
+
+  const stdout = `Tagging ${path} with ${util.inspect(meta)}\n`
+
+  const newData = Object.assign({}, data, { stdout, done: false })
+  progressNotifier.publish(null, newData)
+
+  id3.write(meta, path, callback)
 }

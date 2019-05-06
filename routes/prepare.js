@@ -1,5 +1,5 @@
 const exec = require('child_process').exec
-const sanitize = require('../sanitize.js')
+const sanitize = require('../tools/sanitizer.js')
 
 module.exports = function route (req, res, next) {
   if (!req.body) return next('No body on request')
@@ -9,8 +9,8 @@ module.exports = function route (req, res, next) {
   if (!url) return res.status(400).send('url is required')
 
   try {
-    new URL(url)
-  } catch {
+    new URL(url) // eslint-disable-line no-new
+  } catch (err) {
     return res.status(400).send('invalid url')
   }
 
@@ -41,21 +41,20 @@ module.exports = function route (req, res, next) {
 
 function getMetadata (url, json) {
   const { track: title, artist } = json
-  const format = (title || artist ? 'mp3' : 'webm')
 
   return {
     url: url,
     title: title || '',
     artist: artist || '',
-    filename: getFilename(title, artist, json.title),
-    format: format
+    filename: getFilename(title, artist, json.title)
   }
 }
 
 function getFilename (title, artist, videoTitle) {
+  const extension = (title || artist) ? '.mp3' : '.webm'
   if (title && artist) {
-    return `${sanitize(artist)}-${sanitize(title)}`
+    return `${sanitize(artist)}-${sanitize(title)}${extension}`
   } else {
-    return sanitize(title || videoTitle)
+    return sanitize(title || videoTitle) + extension
   }
 }

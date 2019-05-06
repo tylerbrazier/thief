@@ -15,24 +15,19 @@
     <link rel="stylesheet" href="/assets/styles.css">
   </head>
   <body>
-    <form action="/prepare" method="post">
-      <div>
-        <label for="url">Youtube URL</label>
-        <input type="text" id="url" name="url">
-      </div>
-      <div>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
+    <input type="hidden" id="eventSourceUrl" value="<%= eventSourceUrl %>">
 
-    <form action="/update" method="post">
-      <div>
-        <button type="submit">Update youtube-dl</button>
-      </div>
-    </form>
+    <p id="output"></p>
 
     <div>
-      <p><a href="/files">Downloaded: /files</a></p>
+      <a id="download" download></a>
     </div>
+
+    <noscript>
+      <p>Progress updates requires javascript. File will be here when finished:</p>
+      <p><a href="/files">/files</a></p>
+    </noscript>
+
+    <script src="/assets/progress.js"></script>
   </body>
 </html>

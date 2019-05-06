@@ -1,8 +1,10 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const serveIndex = require('serve-index')
 const conf = require('./conf.js')
 const prepareRoute = require('./routes/prepare.js')
 const downloadRoute = require('./routes/download.js')
+const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
 
 const app = express()
@@ -18,8 +20,13 @@ app.post('/prepare', prepareRoute)
 app.use('/download', bodyParser.urlencoded({ extended: true }))
 app.post('/download', downloadRoute)
 
+app.get('/progress/:downloadId', progressRoute)
+
 app.post('/update', updateRoute)
 
 app.use('/assets', express.static('assets'))
+
+app.use('/files', serveIndex(conf.DEST))
+app.use('/files', express.static(conf.DEST))
 
 app.listen(conf.PORT, () => console.log(`Listening on port ${conf.PORT}`))
