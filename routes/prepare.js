@@ -51,10 +51,13 @@ function getMetadata (url, json) {
 }
 
 function getFilename (title, artist, videoTitle) {
-  const extension = (title || artist) ? '.mp3' : '.webm'
+  let basename
   if (title && artist) {
-    return `${sanitize(artist)}-${sanitize(title)}${extension}`
+    basename = `${sanitize(artist)}-${sanitize(title)}`
   } else {
-    return sanitize(title || videoTitle) + extension
+    basename = sanitize(title || videoTitle)
   }
+
+  const extension = (title || artist) ? '.mp3' : '.webm'
+  return basename.replace(/_-_/g, '-') + extension
 }
