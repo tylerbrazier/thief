@@ -27,3 +27,7 @@ To build and deploy on heroku (production):
     heroku container:release web -a tubethief
 
 <https://devcenter.heroku.com/articles/free-dyno-hours>
+
+## TODO
+- Search
+- Allow downloading a whole playlist (zip all files)
