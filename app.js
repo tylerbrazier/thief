@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const serveIndex = require('serve-index')
+const fs = require('fs')
 const conf = require('./conf.js')
 const prepareRoute = require('./routes/prepare.js')
 const downloadRoute = require('./routes/download.js')
@@ -26,6 +27,7 @@ app.post('/update', updateRoute)
 
 app.use('/assets', express.static('assets'))
 
+fs.mkdirSync(conf.DEST, { recursive: true })
 app.use('/files', serveIndex(conf.DEST))
 app.use('/files', express.static(conf.DEST))
 
