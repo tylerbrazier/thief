@@ -1,7 +1,8 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const serveIndex = require('serve-index')
-const fs = require('fs')
+const mkdirSync = require('fs').mkdirSync
+const exec = require('child_process').exec
 const conf = require('./conf.js')
 const prepareRoute = require('./routes/prepare.js')
 const downloadRoute = require('./routes/download.js')
@@ -27,8 +28,15 @@ app.post('/update', updateRoute)
 
 app.use('/assets', express.static('assets'))
 
-fs.mkdirSync(conf.DEST, { recursive: true })
 app.use('/files', serveIndex(conf.DEST))
 app.use('/files', express.static(conf.DEST))
 
-app.listen(conf.PORT, () => console.log(`Listening on port ${conf.PORT}`))
+mkdirSync(conf.DEST, { recursive: true })
+
+console.log('Updating youtube-dl...')
+exec('youtube-dl --update', (err, stdout, stderr) => {
+  if (err) console.error(err, stderr)
+  console.log(stdout)
+
+  app.listen(conf.PORT, () => console.log(`Listening on port ${conf.PORT}`))
+})
