@@ -29,7 +29,7 @@ module.exports = function download (options, callback) {
   const downloadId = uuid()
   const basepath = path.replace(/\.(mp3|webm)$/, '')
 
-  const args = ['--newline', '-o', `${basepath}.%(ext)s`]
+  const args = ['--restrict-filenames', '--newline', '-o', `${basepath}.%(ext)s`]
   if (path.endsWith('.mp3')) {
     args.push('-x', '--audio-quality', '0', '--audio-format', 'mp3')
   } else {
