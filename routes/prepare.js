@@ -40,14 +40,20 @@ module.exports = function route (req, res, next) {
 }
 
 function getMetadata (url, json) {
-  const { track: title, artist } = json
+  let { track: title, artist } = json
 
-  return {
-    url: url,
-    title: title || '',
-    artist: artist || '',
-    filename: getFilename(title, artist, json.title)
-  }
+  // Need to do this before ensuring artist and title are set in order
+  // to determine the extension.
+  const filename = getFilename(title, artist, json.title)
+
+  // Even if this is a webm, may as well fill the tag fields in case the
+  // video is for a song but the metadata doesn't include track & artist.
+  // Try to parse the video title in the form 'Artist - Song'
+  const split = json.title.split('-').map(s => s.trim())
+  artist = artist || split[0]
+  title = title || split[1] || split[0]
+
+  return { url, title, artist, filename }
 }
 
 function getFilename (title, artist, videoTitle) {
@@ -58,7 +64,9 @@ function getFilename (title, artist, videoTitle) {
     basename = sanitize(title || videoTitle)
   }
 
+  // assume .webm unless the video has a track title and/or artist
   const extension = (title || artist) ? '.mp3' : '.webm'
+
   return basename.replace(/_-_/g, '-') + extension
 }
 

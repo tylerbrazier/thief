@@ -3,5 +3,5 @@
 module.exports = function sanitize (str) {
   if (!str) return str
 
-  return str.replace(/[^\w\s.-]/g, '').replace(/\s+/g, '_')
+  return str.trim().replace(/[^\w\s.-]/g, '').replace(/\s+/g, '_')
 }

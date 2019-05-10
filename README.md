@@ -31,6 +31,5 @@ To build and deploy on heroku (production):
 ## TODO
 - Search
 - Allow downloading a whole playlist (zip all files)
-- Try to fill tag fields based on video name (split on `-`)
 - Downloading large videos still fails on heroku; probably need to send
   periodic pings to client to keep the connection alive.
