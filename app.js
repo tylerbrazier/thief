@@ -31,6 +31,17 @@ app.use('/assets', express.static('assets'))
 app.use('/files', serveIndex(conf.DEST))
 app.use('/files', express.static(conf.DEST))
 
+// not found route
+app.use((req, res, next) => {
+  res.status(404).render('message', { text: '404 not found', isError: true })
+})
+
+// error route
+app.use((err, req, res, next) => {
+  console.error(err)
+  res.status(500).render('message', { text: err.message, isError: true })
+})
+
 mkdirSync(conf.DEST, { recursive: true })
 
 console.log('Updating youtube-dl...')

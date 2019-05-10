@@ -17,3 +17,7 @@ input[type=text] {
 button {
   padding: 4px;
 }
+
+.error {
+  color: red;
+}

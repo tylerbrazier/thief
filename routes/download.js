@@ -11,18 +11,18 @@ module.exports = function route (req, res, next) {
   if (!body) return next('No body on request')
 
   const filename = sanitize(body.filename)
-  if (!filename) return res.status(400).send('filename is required')
+  if (!filename) return reject(res, 'filename is required')
   if (!filename.endsWith('.mp3') && !filename.endsWith('.webm')) {
-    res.status(400).send('file extension must either be webm or mp3')
+    reject(res, 'file extension must either be webm or mp3')
   }
 
   const { url, artist, title } = body
-  if (!url) return res.status(400).send('url is required')
+  if (!url) return reject(res, 'url is required')
 
   try {
     new URL(url) // eslint-disable-line no-new
   } catch (err) {
-    return res.status(400).send('invalid url')
+    return reject(res, 'invalid url')
   }
 
   const path = join(conf.DEST, filename)
@@ -63,4 +63,8 @@ function postdownload (data, callback) {
   progressNotifier.publish(null, newData)
 
   id3.write(meta, path, callback)
+}
+
+function reject (res, message) {
+  res.status(400).render('message', { text: message, isError: true })
 }

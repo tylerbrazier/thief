@@ -6,12 +6,12 @@ module.exports = function route (req, res, next) {
 
   const url = req.body.url
 
-  if (!url) return res.status(400).send('url is required')
+  if (!url) return reject(res, 'url is required')
 
   try {
     new URL(url) // eslint-disable-line no-new
   } catch (err) {
-    return res.status(400).send('invalid url')
+    return reject(res, 'invalid url')
   }
 
   const cmd = 'youtube-dl -J ' + url
@@ -29,7 +29,7 @@ module.exports = function route (req, res, next) {
       if (!json) return next('JSON parse returned empty: ' + json)
 
       if (json._type === 'playlist') {
-        return res.status(400).send('downloading playlist is not supported')
+        return reject(res, 'downloading playlist is not supported')
       }
 
       res.render('form', getMetadata(url, json))
@@ -60,4 +60,8 @@ function getFilename (title, artist, videoTitle) {
 
   const extension = (title || artist) ? '.mp3' : '.webm'
   return basename.replace(/_-_/g, '-') + extension
+}
+
+function reject (res, message) {
+  res.status(400).render('message', { text: message, isError: true })
 }

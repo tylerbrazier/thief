@@ -6,6 +6,6 @@ module.exports = function route (req, res, next) {
       console.error(stderr)
       return next(err)
     }
-    res.send(stdout)
+    res.render('message', { text: stdout, isError: false })
   })
 }
