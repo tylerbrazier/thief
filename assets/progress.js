@@ -27,6 +27,7 @@ eventSource.addEventListener('done', function (event) {
 })
 
 eventSource.addEventListener('error', function (event) {
-  output.innerHTML = '<span class="error">' + event.data + '</span>' + output.innerHTML
+  var message = event.data || 'Error'
+  output.innerHTML = '<span class="error">' + message + '</span><br>' + output.innerHTML
   eventSource.close()
 })

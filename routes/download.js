@@ -5,6 +5,7 @@ const id3 = require('node-id3')
 const sanitize = require('../tools/sanitizer.js')
 const download = require('../tools/downloader.js')
 const progressNotifier = require('../tools/progressNotifier.js')
+const keepAlive = require('../tools/keepAlive.js')
 
 module.exports = function route (req, res, next) {
   const body = req.body
@@ -32,6 +33,8 @@ module.exports = function route (req, res, next) {
   const downloadOptions = { url, path, passthrough, postdownload }
 
   const downloadId = download(downloadOptions, progressNotifier.publish)
+
+  keepAlive(downloadId)
 
   // wire up logging
   progressNotifier.subscribe(downloadId, (err, data) => {

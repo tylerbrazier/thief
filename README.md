@@ -31,5 +31,3 @@ To build and deploy on heroku (production):
 ## TODO
 - Search
 - Allow downloading a whole playlist (zip all files)
-- Downloading large videos still fails on heroku; probably need to send
-  periodic pings to client to keep the connection alive.
