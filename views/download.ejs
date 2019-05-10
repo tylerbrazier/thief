@@ -17,22 +17,24 @@
   <body>
     <input type="hidden" id="eventSourceUrl" value="<%= eventSourceUrl %>">
 
-    <div>
-      <p>Back to <a href="/">home</a></p>
-    </div>
+    <noscript>
+      <p>
+      Progress updates requires javascript. File will be here when finished:
+      <a href="/files">/files</a>
+      </p>
+    </noscript>
 
     <div>
-      <p id="output"></p>
+      <p>Back to <a href="/">home</a></p>
     </div>
 
     <div>
       <a id="download" download></a>
     </div>
 
-    <noscript>
-      <p>Progress updates requires javascript. File will be here when finished:</p>
-      <p><a href="/files">/files</a></p>
-    </noscript>
+    <div>
+      <p id="output"></p>
+    </div>
 
     <script src="/assets/progress.js"></script>
   </body>

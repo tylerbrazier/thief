@@ -14,10 +14,10 @@ var eventSourceUrl = document.getElementById('eventSourceUrl').value
 var downloadLink = document.getElementById('download')
 var eventSource = new EventSource(eventSourceUrl)
 
-output.innerHTML = 'Requesting progress updates...<br>'
+output.innerHTML = 'Requesting progress updates...'
 
 eventSource.addEventListener('progress', function (event) {
-  output.innerHTML += event.data
+  output.innerHTML = event.data + output.innerHTML
 })
 
 eventSource.addEventListener('done', function (event) {
@@ -27,6 +27,6 @@ eventSource.addEventListener('done', function (event) {
 })
 
 eventSource.addEventListener('error', function (event) {
-  output.innerHTML += '<span class="error">' + event.data + '</span>'
+  output.innerHTML = '<span class="error">' + event.data + '</span>' + output.innerHTML
   eventSource.close()
 })
