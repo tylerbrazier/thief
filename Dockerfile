@@ -1,20 +1,18 @@
 # https://nodejs.org/en/docs/guides/nodejs-docker-webapp/
 
-FROM node:10
+FROM node:10-alpine
 WORKDIR /usr/src/app
+ENV NODE_ENV=production
 
-# needed for converting videos to mp3s
-# https://wiki.debian.org/ffmpeg
-RUN apt-get update && apt-get install -y libav-tools
+RUN apk add --update ffmpeg curl python
 
 # https://github.com/ytdl-org/youtube-dl
-# the base node docker image includes python
 RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
 RUN chmod a+rx /usr/local/bin/youtube-dl
 
 # install deps first to take advantage of layer caching
 COPY package*.json ./
-RUN npm install
+RUN npm ci --only=production
 
 # copy the app sources
 COPY . .

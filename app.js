@@ -9,6 +9,8 @@ const downloadRoute = require('./routes/download.js')
 const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
 
+console.debug('NODE_ENV=' + process.env.NODE_ENV)
+
 const app = express()
 
 app.set('views', './views')
