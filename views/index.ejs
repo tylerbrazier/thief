@@ -1,38 +1,26 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/assets/styles.css">
 
-    <!--
-      mobile friendly
-      https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag
-      https://developers.google.com/web/fundamentals/design-and-ux/responsive/
-    -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thief</title>
 
-    <title>Thief</title>
+<form action="/prepare" method="post">
+  <div>
+    <label for="url">Youtube URL</label>
+    <input type="text" id="url" name="url" autofocus>
+  </div>
+  <div>
+    <button type="submit">Submit</button>
+  </div>
+</form>
 
-    <link rel="stylesheet" href="/assets/styles.css">
-  </head>
-  <body>
-    <form action="/prepare" method="post">
-      <div>
-        <label for="url">Youtube URL</label>
-        <input type="text" id="url" name="url" autofocus>
-      </div>
-      <div>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
+<form action="/update" method="post">
+  <div>
+    <button type="submit">Update youtube-dl</button>
+  </div>
+</form>
 
-    <form action="/update" method="post">
-      <div>
-        <button type="submit">Update youtube-dl</button>
-      </div>
-    </form>
-
-    <div>
-      <p>Downloaded: <a href="/files">/files</a></p>
-    </div>
-  </body>
-</html>
+<div>
+  <p>Downloaded: <a href="/files">/files</a></p>
+</div>

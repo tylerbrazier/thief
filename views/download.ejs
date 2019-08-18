@@ -1,41 +1,29 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/assets/styles.css">
 
-    <!--
-      mobile friendly
-      https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag
-      https://developers.google.com/web/fundamentals/design-and-ux/responsive/
-    -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thief</title>
 
-    <title>Thief</title>
+<input type="hidden" id="eventSourceUrl" value="<%= eventSourceUrl %>">
 
-    <link rel="stylesheet" href="/assets/styles.css">
-  </head>
-  <body>
-    <input type="hidden" id="eventSourceUrl" value="<%= eventSourceUrl %>">
+<noscript>
+  <p>
+  Progress updates requires javascript. File will be here when finished:
+  <a href="/files">/files</a>
+  </p>
+</noscript>
 
-    <noscript>
-      <p>
-      Progress updates requires javascript. File will be here when finished:
-      <a href="/files">/files</a>
-      </p>
-    </noscript>
+<div>
+  <p>Back to <a href="/">home</a></p>
+</div>
 
-    <div>
-      <p>Back to <a href="/">home</a></p>
-    </div>
+<div>
+  <a id="download" download></a>
+</div>
 
-    <div>
-      <a id="download" download></a>
-    </div>
+<div>
+  <p id="output"></p>
+</div>
 
-    <div>
-      <p id="output"></p>
-    </div>
-
-    <script src="/assets/progress.js"></script>
-  </body>
-</html>
+<script src="/assets/progress.js"></script>
