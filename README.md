@@ -11,11 +11,7 @@ For development:
 To build the docker image and run the container locally:
 
     docker build -t thief .
-    docker run -p 8080:8080 thief
-
-    # to kill it:
-    docker ps  # get its id
-    docker kill <id>
+    docker run --init -p 8080:8080 thief
 
 To build and deploy on heroku (production):
 
