@@ -4,11 +4,11 @@
   "description": "Web service for downloading youtube videos and songs",
   "main": "app.js",
   "dependencies": {
-    "ejs": "^2.6.2",
+    "ejs": "^2.7.1",
     "express": "^4.17.1",
     "node-id3": "^0.1.11",
     "serve-index": "^1.9.1",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "standard": "^12.0.1"
