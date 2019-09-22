@@ -14,7 +14,9 @@
     "standard": "^12.0.1"
   },
   "scripts": {
-    "lint": "standard"
+    "lint": "standard",
+    "preversion": "npm run lint",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
