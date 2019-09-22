@@ -15,7 +15,7 @@ const spawn = require('child_process').spawn
 //
 // options param should have the following properties:
 // - url: youtube url to download
-// - path: the complete path of the resulting file, *excluding* extension
+// - path: the complete path of the resulting file
 // - passthrough: (optional) anything you'd like passed through to the callback
 // - postdownload: (optional) callback to be fired when finished downloading
 //   but before sending the final 'done' callback; the postdownload hook
@@ -27,9 +27,8 @@ const spawn = require('child_process').spawn
 module.exports = function download (options, callback) {
   const { url, path, passthrough, postdownload } = options
   const downloadId = uuid()
-  const basepath = path.replace(/\.(mp3|webm)$/, '')
 
-  const args = ['--restrict-filenames', '--newline', '-o', `${basepath}.%(ext)s`]
+  const args = ['--restrict-filenames', '--newline', '-o', path]
   if (path.endsWith('.mp3')) {
     args.push('-x', '--audio-quality', '0', '--audio-format', 'mp3')
   } else {
