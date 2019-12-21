@@ -46,11 +46,13 @@ app.use((err, req, res, next) => {
 
 mkdirSync(conf.DEST, { recursive: true })
 
-console.log('Updating youtube-dl...')
-exec('youtube-dl --update', (err, stdout, stderr) => {
-  if (err) console.error(err)
-  if (stderr) process.stderr.write(stderr)
-  if (stdout) process.stdout.write(stdout)
-})
+if (process.env.NODE_ENV === 'production') {
+  console.log('Updating youtube-dl...')
+  exec('youtube-dl --update', (err, stdout, stderr) => {
+    if (err) console.error(err)
+    if (stderr) process.stderr.write(stderr)
+    if (stdout) process.stdout.write(stdout)
+  })
+}
 
 app.listen(conf.PORT, () => console.log(`Listening on port ${conf.PORT}`))
