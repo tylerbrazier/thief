@@ -25,4 +25,3 @@ To build and deploy on heroku (production):
 
 ## TODO
 - Search
-- Allow downloading a whole playlist (zip all files)
