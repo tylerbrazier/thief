@@ -4,7 +4,6 @@ const serveIndex = require('serve-index')
 const mkdirSync = require('fs').mkdirSync
 const exec = require('child_process').exec
 const conf = require('./conf.js')
-const prepareRoute = require('./routes/prepare.js')
 const downloadRoute = require('./routes/download.js')
 const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
@@ -17,9 +16,6 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => res.render('index', { destRoute: conf.DEST_ROUTE }))
-
-app.use('/prepare', bodyParser.urlencoded({ extended: true }))
-app.post('/prepare', prepareRoute)
 
 app.use('/download', bodyParser.urlencoded({ extended: true }))
 app.post('/download', downloadRoute)

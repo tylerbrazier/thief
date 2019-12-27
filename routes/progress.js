@@ -1,4 +1,4 @@
-// This route is hit by the client-side js code using EventSource()
+// This route is hit by the client-side js using EventSource() to get download progress updates.
 // https://medium.com/conectric-networks/a-look-at-server-sent-events-54a77f8d6ff7
 //
 // The server sends the following events types:

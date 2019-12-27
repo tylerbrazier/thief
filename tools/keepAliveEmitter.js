@@ -1,3 +1,8 @@
+// Heroku will terminate connections that are idle for 30s. See:
+// https://devcenter.heroku.com/articles/request-timeout
+// This module wraps the EventEmitter and will keep the connection alive
+// by emitting a 'Still working' event if no events go out for a few seconds.
+
 const EventEmitter = require('events')
 
 module.exports = class KeepAliveEmitter extends EventEmitter {
