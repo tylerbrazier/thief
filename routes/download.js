@@ -1,6 +1,4 @@
 const conf = require('../conf.js')
-const join = require('path').join
-const util = require('util')
 const pool = require('../tools/jobPool.js')
 
 module.exports = function route (req, res, next) {

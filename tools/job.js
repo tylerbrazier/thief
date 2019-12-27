@@ -8,11 +8,10 @@ const { join, basename } = require('path')
 const { promisify } = require('util')
 const pmkdir = promisify(fs.mkdir)
 const preaddir = promisify(fs.readdir)
-const preadFile = promisify(fs.readFile)
 const prename = promisify(fs.rename)
 
-class Job {
-  constructor(id, url, addMeta, audioOnly, format) {
+module.exports = class Job {
+  constructor (id, url, addMeta, audioOnly, format) {
     this.id = id
     this.url = url
     this.addMeta = addMeta
@@ -33,10 +32,10 @@ class Job {
     this.emitter.on('error', console.error)
   }
 
-  async run() {
+  async run () {
     try {
       await pmkdir(this.dir, { recursive: true })
-      await download({
+      await this._download({
         url: this.url,
         dir: this.dir,
         withInfo: this.isPlaylist,
@@ -46,27 +45,17 @@ class Job {
         emitter: this.emitter
       })
       if (this.isPlaylist) {
-        const jsonFilename = await getFirstFilename(this.dir, f => f.endsWith('.info.json'))
-        if (!jsonFilename) throw Error('Could not find .info.json file')
-
-        const json = await readJson(this.dir, jsonFilename)
-        const playlist = sanitize(json.playlist)
-        if (!playlist) throw Error('No playlist found in ' + jsonFilename)
-
-        const playlistDir = join(this.dir, playlist)
-
-        await pmkdir(playlistDir)
-
-        await moveAllFiles(this.dir, playlistDir, f => !f.endsWith('.info.json'))
+        const playlistDir = await this._getFirstFilename()
+        if (!playlistDir) throw Error('Unable to find files')
 
         this.emitter.emit('progress', 'Compressing...')
-        const tgz = await compressDir(playlistDir)
+        const tgz = await this._compress(join(this.dir, playlistDir))
 
         await prename(tgz, join(conf.DEST_DIR, basename(tgz)))
 
         this.emitter.emit('done', basename(tgz))
       } else {
-        const filename = await getFirstFilename(this.dir)
+        const filename = await this._getFirstFilename()
         if (!filename) throw Error('Unable to find downloaded file')
 
         await prename(join(this.dir, filename), join(conf.DEST_DIR, filename))
@@ -76,84 +65,46 @@ class Job {
       this.emitter.emit('error', err.message)
     }
   }
-}
 
-function download (options) {
-  const { url, dir, withInfo, addMeta, audioOnly, format, emitter } = options
-  return new Promise((resolve, reject) => {
-    const args = [
-      '--restrict-filenames',
-      '--newline',
-      '-o', '%(title)s.%(ext)s'
-    ]
-    if (withInfo) args.push('--write-info-json')
-    if (addMeta) args.push('--add-metadata')
-    if (audioOnly) args.push('-x')
-    if (audioOnly) args.push('--audio-format', format)
-    else args.push('--format', format)
-    args.push(url.toString())
+  _download () {
+    return new Promise((resolve, reject) => {
+      const args = [ '--restrict-filenames', '--newline' ]
+      if (this.addMeta) args.push('--add-metadata')
+      if (this.audioOnly) args.push('-x')
+      if (this.audioOnly) args.push('--audio-format', this.format)
+      else args.push('--format', this.format)
+      let outputTemplate = '%(title)s.%(ext)s'
+      if (this.isPlaylist) outputTemplate = '%(playlist)s/%(playlist_index)s-' + outputTemplate
+      args.push('-o', outputTemplate)
+      args.push(this.url.toString())
 
-    emitter.emit('progress', 'youtube-dl ' + args.join(' '))
-    const proc = spawn('youtube-dl', args, { cwd: dir })
+      this.emitter.emit('progress', 'youtube-dl ' + args.join(' '))
+      const proc = spawn('youtube-dl', args, { cwd: this.dir })
 
-    // wire up event emitting
-    const ondata = data => emitter.emit('progress', data.toString().trim())
-    proc.stdout.on('data', ondata)
-    proc.stderr.on('data', ondata)
-    proc.on('error', reject)
-    proc.on('close', (code) => {
-      if (code == 0) {
-        emitter.emit('progress', 'Finished downloading')
-        resolve()
-      } else reject(Error('youtube-dl exited with ' + code))
+      // wire up event emitting
+      const ondata = data => this.emitter.emit('progress', data.toString().trim())
+      proc.stdout.on('data', ondata)
+      proc.stderr.on('data', ondata)
+      proc.on('error', reject)
+      proc.on('close', (code) => {
+        if (code === 0) {
+          this.emitter.emit('progress', 'Finished downloading')
+          resolve()
+        } else reject(Error('youtube-dl exited with ' + code))
+      })
     })
-  })
-}
-
-async function getFirstFilename (dir, filter = () => true) {
-  const files = await preaddir(dir, { withFileTypes: true })
-  return files
-    .filter(f => f.isFile())
-    .map(f => f.name)
-    .filter(filter)
-    .pop()
-}
-
-async function readJson (dir, filename) {
-  const text = await preadFile(join(dir, filename), 'utf8')
-  try {
-    return JSON.parse(text)
-  } catch (err) {
-    throw Error(`Unable to parse ${filename}: ${err.message}`)
   }
-}
 
-async function moveAllFiles (src, dest, filter = () => true) {
-  let filename
-  while (filename = await getFirstFilename(src, filter)) {
-    await prename(join(src, filename), join(dest, filename))
+  _getFirstFilename () {
+    return preaddir(this.dir).then(entries => entries.pop())
   }
-}
 
-function compressDir (dir) {
-  const filepath = dir + '.tar.gz'
-  return tar.c({
-    gzip: true,
-    cwd: join(dir, '..'),
-    file: filepath
-  }, [ basename(dir) ])
-    .then(() => filepath)
-}
-
-// Replaces anything besides alphanumerics, dots, and dashes with _
-function sanitize (text = '') {
-  return text.trim().replace(/[^\w\s.-]/g, '_').replace(/\s+/g, '_')
-}
-
-module.exports = {
-  Job,
-  getFirstFilename,
-  readJson,
-  moveAllFiles,
-  compressDir,
+  _compress (dir) {
+    const filepath = dir + '.tar.gz'
+    return tar.c({
+      gzip: true,
+      cwd: join(dir, '..'),
+      file: filepath
+    }, [ basename(dir) ]).then(() => filepath)
+  }
 }

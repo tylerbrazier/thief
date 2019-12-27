@@ -1,4 +1,4 @@
-const { Job } = require('./job.js')
+const Job = require('./job.js')
 const uuid = require('uuid/v4')
 
 module.exports = { create, lookup }

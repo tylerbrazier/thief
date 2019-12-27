@@ -11,7 +11,7 @@ module.exports = class KeepAliveEmitter extends EventEmitter {
     this.on('done', this.cancelTimer)
   }
 
-  restartTimer() {
+  restartTimer () {
     this.cancelTimer()
     this.timeout = setTimeout(this.ping.bind(this), this.delay)
   }
