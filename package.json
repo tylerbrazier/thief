@@ -6,7 +6,6 @@
   "dependencies": {
     "ejs": "^2.7.1",
     "express": "^4.17.1",
-    "node-id3": "^0.1.11",
     "serve-index": "^1.9.1",
     "tar": "^5.0.5",
     "uuid": "^3.3.3"

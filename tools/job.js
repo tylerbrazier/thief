@@ -12,9 +12,10 @@ const preadFile = promisify(fs.readFile)
 const prename = promisify(fs.rename)
 
 class Job {
-  constructor(id, url, audioOnly, format) {
+  constructor(id, url, addMeta, audioOnly, format) {
     this.id = id
     this.url = url
+    this.addMeta = addMeta
     this.audioOnly = audioOnly
     this.format = format
     this.dir = join(tmpdir(), id)
@@ -30,7 +31,6 @@ class Job {
     this.emitter.on('progress', console.log)
     this.emitter.on('done', console.log)
     this.emitter.on('error', console.error)
-    // TODO mp3 tagging
   }
 
   async run() {
@@ -40,6 +40,7 @@ class Job {
         url: this.url,
         dir: this.dir,
         withInfo: this.isPlaylist,
+        addMeta: this.addMeta,
         audioOnly: this.audioOnly,
         format: this.format,
         emitter: this.emitter
@@ -78,7 +79,7 @@ class Job {
 }
 
 function download (options) {
-  const { url, dir, withInfo, audioOnly, format, emitter } = options
+  const { url, dir, withInfo, addMeta, audioOnly, format, emitter } = options
   return new Promise((resolve, reject) => {
     const args = [
       '--restrict-filenames',
@@ -86,6 +87,7 @@ function download (options) {
       '-o', '%(title)s.%(ext)s'
     ]
     if (withInfo) args.push('--write-info-json')
+    if (addMeta) args.push('--add-metadata')
     if (audioOnly) args.push('-x')
     if (audioOnly) args.push('--audio-format', format)
     else args.push('--format', format)

@@ -15,7 +15,9 @@ module.exports = function route (req, res, next) {
   const format = req.body.format || 'best'
   if (!/^[a-z0-9]+$/.test(format)) return badRequest(res, 'Invalid format')
 
-  const id = pool.create(url, req.body.audioOnly, format)
+  const { addMeta, audioOnly } = req.body
+
+  const id = pool.create(url, addMeta, audioOnly, format)
   res.render('download', { eventSourceUrl: '/progress/' + id, destRoute: conf.DEST_ROUTE })
 }
 

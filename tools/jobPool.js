@@ -5,9 +5,9 @@ module.exports = { create, lookup }
 
 const jobs = {} // map of ids to Jobs
 
-function create (url, audioOnly, format) {
+function create (url, addMeta, audioOnly, format) {
   const id = uuid()
-  const job = new Job(id, url, audioOnly, format)
+  const job = new Job(id, url, addMeta, audioOnly, format)
   jobs[id] = job
   job.emitter.on('done', () => remove(id))
   job.emitter.on('error', () => remove(id))
