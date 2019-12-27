@@ -5,10 +5,18 @@
 
 <title>Thief</title>
 
-<form action="/prepare" method="post">
+<form action="/download" method="post">
   <div>
     <label for="url">Youtube URL</label>
     <input type="text" id="url" name="url" autofocus>
+  </div>
+  <div>
+    <label for="format">Format</label>
+    <input type="text" id="format" name="format" placeholder="Default: 'best'">
+  </div>
+  <div>
+    <input type="checkbox" id="audioOnly" name="audioOnly" checked>
+    <label for="audio">Audio only</label>
   </div>
   <div>
     <button type="submit">Submit</button>
@@ -22,5 +30,5 @@
 </form>
 
 <div>
-  <p>Downloaded: <a href="/files">/files</a></p>
+  <p><a href="<%= destRoute %>"><%= destRoute %></a></p>
 </div>

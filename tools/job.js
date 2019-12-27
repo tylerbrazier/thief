@@ -1,9 +1,9 @@
 const conf = require('../conf.js')
-const EventEmitter = require('events')
-const zlib = require('zlib')
+const KeepAliveEmitter = require('./keepAliveEmitter.js')
 const tar = require('tar')
 const fs = require('fs')
 const { tmpdir } = require('os')
+const { spawn } = require('child_process')
 const { join, basename } = require('path')
 const { promisify } = require('util')
 const pmkdir = promisify(fs.mkdir)
@@ -12,83 +12,98 @@ const preadFile = promisify(fs.readFile)
 const prename = promisify(fs.rename)
 
 class Job {
-  constructor(id, url) {
+  constructor(id, url, audioOnly, format) {
     this.id = id
     this.url = url
+    this.audioOnly = audioOnly
+    this.format = format
     this.dir = join(tmpdir(), id)
-    this.emitter = new EventEmitter()
     this.isPlaylist = url.pathname.startsWith('/playlist')
+    this.progressBuffer = []
+    this.emitter = new KeepAliveEmitter()
+    // Events from emitter:
+    // progress (with text)
+    // done (with final filename)
+    // error (with Error)
+
+    this.emitter.on('progress', data => this.progressBuffer.push(data))
+    this.emitter.on('progress', console.log)
+    this.emitter.on('done', console.log)
+    this.emitter.on('error', console.error)
+    // TODO mp3 tagging
   }
 
-  async start() {
-    await pmkdir(this.dir, { recursive: true })
-    await download(this.url, this.dir, this.isPlaylist, this.emitter)
-    if (this.isPlaylist) {
-      const jsonFilename = await getFirstFilename(this.dir, f => f.endsWith('.info.json'))
-      if (!jsonFilename) throw Error('Could not find .info.json file')
+  async run() {
+    try {
+      await pmkdir(this.dir, { recursive: true })
+      await download({
+        url: this.url,
+        dir: this.dir,
+        withInfo: this.isPlaylist,
+        audioOnly: this.audioOnly,
+        format: this.format,
+        emitter: this.emitter
+      })
+      if (this.isPlaylist) {
+        const jsonFilename = await getFirstFilename(this.dir, f => f.endsWith('.info.json'))
+        if (!jsonFilename) throw Error('Could not find .info.json file')
 
-      const json = await readJson(this.dir, jsonFilename)
-      const playlist = sanitize(json.playlist)
-      if (!playlist) throw Error('no playlist found in ' + jsonFilename)
+        const json = await readJson(this.dir, jsonFilename)
+        const playlist = sanitize(json.playlist)
+        if (!playlist) throw Error('No playlist found in ' + jsonFilename)
 
-      const playlistDir = join(this.dir, playlist)
+        const playlistDir = join(this.dir, playlist)
 
-      await pmkdir(playlistDir)
+        await pmkdir(playlistDir)
 
-      // move all the audio files into the playlist dir
-      await moveAllFiles(this.dir, playlistDir, f => !f.endsWith('.info.json'))
+        await moveAllFiles(this.dir, playlistDir, f => !f.endsWith('.info.json'))
 
-      this._emit('Compressing...')
-      const tgz = await compressDir(playlistDir)
+        this.emitter.emit('progress', 'Compressing...')
+        const tgz = await compressDir(playlistDir)
 
-      await prename(tgz, join(conf.DEST, basename(tgz)))
+        await prename(tgz, join(conf.DEST_DIR, basename(tgz)))
 
-      this._emit(basename(tgz), 'done')
-    } else {
-      const filename = await getFirstFilename(this.dir)
-      if (!filename) throw Error('Unable to find downloaded file')
+        this.emitter.emit('done', basename(tgz))
+      } else {
+        const filename = await getFirstFilename(this.dir)
+        if (!filename) throw Error('Unable to find downloaded file')
 
-      await prename(join(this.dir, filename), join(conf.DEST, filename)) // move to DEST
-      this._emit(filename, 'done')
+        await prename(join(this.dir, filename), join(conf.DEST_DIR, filename))
+        this.emitter.emit('done', filename)
+      }
+    } catch (err) {
+      this.emitter.emit('error', err.message)
     }
-  }
-
-  // returns EventEmitter that emits:
-  // progress (with text)
-  // done (with final filename)
-  // error (with Error)
-  subscribe() {
-    return this.emitter
-  }
-
-  _emit (message, event = 'progress') {
-    this.emitter.emit(event, message)
   }
 }
 
-function download (url, dir, withInfo = false, emitter = new EventEmitter()) {
+function download (options) {
+  const { url, dir, withInfo, audioOnly, format, emitter } = options
   return new Promise((resolve, reject) => {
     const args = [
       '--restrict-filenames',
       '--newline',
-      '-o', '%(title)s'
+      '-o', '%(title)s.%(ext)s'
     ]
     if (withInfo) args.push('--write-info-json')
+    if (audioOnly) args.push('-x')
+    if (audioOnly) args.push('--audio-format', format)
+    else args.push('--format', format)
+    args.push(url.toString())
 
-    emitter.emit('progress', 'Downloading ' + url.toString())
+    emitter.emit('progress', 'youtube-dl ' + args.join(' '))
     const proc = spawn('youtube-dl', args, { cwd: dir })
 
     // wire up event emitting
-    proc.stdout.on('data', (stdout) => emitter.emit('progress', stdout))
-    proc.stderr.on('data', (stderr) => emitter.emit('progress', stderr))
+    const ondata = data => emitter.emit('progress', data.toString().trim())
+    proc.stdout.on('data', ondata)
+    proc.stderr.on('data', ondata)
+    proc.on('error', reject)
     proc.on('close', (code) => {
-      emitter.emit('progress', `Finished downloading (exit code ${code})`)
-      if (code == 0) resolve()
-      else reject(Error('youtube-dl exited with code ' + code))
-    })
-    proc.on('error', (err) => {
-      emitter.emit('error', err)
-      reject(err)
+      if (code == 0) {
+        emitter.emit('progress', 'Finished downloading')
+        resolve()
+      } else reject(Error('youtube-dl exited with ' + code))
     })
   })
 }
@@ -112,7 +127,6 @@ async function readJson (dir, filename) {
 }
 
 async function moveAllFiles (src, dest, filter = () => true) {
-  // move all the audio files into the playlist dir
   let filename
   while (filename = await getFirstFilename(src, filter)) {
     await prename(join(src, filename), join(dest, filename))

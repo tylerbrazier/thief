@@ -16,7 +16,7 @@ const app = express()
 app.set('views', './views')
 app.set('view engine', 'ejs')
 
-app.get('/', (req, res) => res.render('index'))
+app.get('/', (req, res) => res.render('index', { destRoute: conf.DEST_ROUTE }))
 
 app.use('/prepare', bodyParser.urlencoded({ extended: true }))
 app.post('/prepare', prepareRoute)
@@ -24,14 +24,14 @@ app.post('/prepare', prepareRoute)
 app.use('/download', bodyParser.urlencoded({ extended: true }))
 app.post('/download', downloadRoute)
 
-app.get('/progress/:downloadId', progressRoute)
+app.get('/progress/:id', progressRoute)
 
 app.post('/update', updateRoute)
 
 app.use('/assets', express.static('assets'))
 
-app.use('/files', serveIndex(conf.DEST))
-app.use('/files', express.static(conf.DEST))
+app.use(conf.DEST_ROUTE, serveIndex(conf.DEST_DIR))
+app.use(conf.DEST_ROUTE, express.static(conf.DEST_DIR))
 
 // not found route
 app.use((req, res, next) => {
@@ -44,7 +44,7 @@ app.use((err, req, res, next) => {
   res.status(500).render('message', { text: err.message, isError: true })
 })
 
-mkdirSync(conf.DEST, { recursive: true })
+mkdirSync(conf.DEST_DIR, { recursive: true })
 
 if (process.env.NODE_ENV === 'production') {
   console.log('Updating youtube-dl...')

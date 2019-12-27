@@ -17,7 +17,7 @@ var eventSource = new EventSource(eventSourceUrl)
 output.innerHTML = 'Requesting progress updates...'
 
 eventSource.addEventListener('progress', function (event) {
-  output.innerHTML = event.data + output.innerHTML
+  output.innerHTML = event.data + '<br>' + output.innerHTML
 })
 
 eventSource.addEventListener('done', function (event) {

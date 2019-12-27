@@ -7,11 +7,12 @@
 // - error: data field will contain an error message
 // When the client receives the 'done' or 'error' event he should close the connection.
 
-const progressNotifier = require('../tools/progressNotifier.js')
+const pool = require('../tools/jobPool.js')
+const conf = require('../conf.js')
 
 module.exports = function route (req, res, next) {
-  const downloadId = req.params.downloadId
-  if (!downloadId) return next('downloadId is required')
+  const job = pool.lookup(req.params.id)
+  if (!job) return next('No job with id ' + req.params.id)
 
   res.writeHead(200, {
     'Connection': 'keep-alive',
@@ -19,31 +20,35 @@ module.exports = function route (req, res, next) {
     'Cache-Control': 'no-cache'
   })
 
-  progressNotifier.subscribe(downloadId, (err, data) => {
-    const { stdout, stderr, passthrough, done } = data
+  // write any buffered messages
+  if (job.progressBuffer.length) {
+    const data = job.progressBuffer.map(formatForEvent).join('<br>')
+    res.write(`event: progress\ndata: ${data}\n\n`)
+  }
 
-    if (err) {
-      res.write(`event: error\ndata: ${htmlEscape(err.message || err)}\n\n`)
-      return res.end()
-    }
+  job.emitter.on('progress', message => {
+    res.write(`event: progress\ndata: ${formatForEvent(message)}\n\n`)
+  })
 
-    if (done) {
-      const fileRoute = '/files/' + passthrough.filename
-      res.write(`event: done\ndata: ${htmlEscape(fileRoute)}\n\n`)
-      return res.end()
-    }
+  job.emitter.on('error', err => {
+    res.write(`event: error\ndata: ${formatForEvent(err.message || err)}\n\n`)
+    res.end()
+  })
 
-    if (stdout || stderr) {
-      const out = (stdout || '') + (stderr || '')
-      const html = htmlEscape(out).replace(/\n/g, '<br>')
-      return res.write(`event: progress\ndata: ${html}\n\n`)
-    }
+  job.emitter.on('done', filename => {
+    const fileRoute = `${conf.DEST_ROUTE}/${filename}`
+    res.write(`event: done\ndata: ${formatForEvent(fileRoute)}\n\n`)
+    res.end()
   })
 
   req.on('close', () => res.end())
 }
 
-function htmlEscape (text) {
+function formatForEvent (text) {
   if (!text) return ''
-  return text.replace(/&/g, '&amp').replace(/>/g, '&gt').replace(/</g, '&lt')
+  return text
+    .replace(/&/g, '&amp')
+    .replace(/>/g, '&gt')
+    .replace(/</g, '&lt')
+    .replace(/\n+/g, '<br>')
 }
