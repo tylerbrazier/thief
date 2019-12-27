@@ -16,7 +16,8 @@
   "scripts": {
     "lint": "standard",
     "preversion": "npm run lint",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "test": "node test/*.js"
   },
   "repository": {
     "type": "git",
