@@ -17,7 +17,7 @@ To build and deploy on heroku (production):
 
     npm version <major|minor|patch>
 
-    # after `heroku login` and such
+    # after `heroku login` and `heroku container:login` and such
     heroku container:push web -a tubethief
     heroku container:release web -a tubethief
 
