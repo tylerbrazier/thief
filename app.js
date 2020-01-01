@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 // error route
 app.use((err, req, res, next) => {
   console.error(err)
-  res.status(500).render('message', { text: err.message, isError: true })
+  res.status(500).render('message', { text: err.message || err, isError: true })
 })
 
 mkdirSync(conf.DEST_DIR, { recursive: true })

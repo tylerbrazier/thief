@@ -12,7 +12,7 @@ const conf = require('../conf.js')
 
 module.exports = function route (req, res, next) {
   const job = pool.lookup(req.params.id)
-  if (!job) return next('No job with id ' + req.params.id)
+  if (!job) return next(Error('No job with id ' + req.params.id))
 
   res.writeHead(200, {
     'Connection': 'keep-alive',

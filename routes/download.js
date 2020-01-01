@@ -2,7 +2,7 @@ const conf = require('../conf.js')
 const pool = require('../tools/jobPool.js')
 
 module.exports = function route (req, res, next) {
-  if (!req.body) return next('No body on request')
+  if (!req.body) return next(Error('No body on request'))
 
   try {
     var url = new URL(req.body.url)
