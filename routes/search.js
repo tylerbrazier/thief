@@ -1,5 +1,5 @@
-const https = require('https')
 const conf = require('../conf.js')
+const api = require('../tools/api.js')
 
 // https://developers.google.com/youtube/v3/docs/search/list
 
@@ -15,18 +15,5 @@ module.exports = function route (req, res, next) {
     'type=video,playlist'
   ].join('&')
 
-  https.get(url, apiRes => {
-    let payload = ''
-    apiRes.setEncoding('utf8')
-    apiRes.on('data', chunk => { payload += chunk })
-    apiRes.on('end', () => {
-      try {
-        var json = JSON.parse(payload)
-        if (apiRes.statusCode === 200) res.render('search', { json })
-        else res.render('message', { text: payload, isError: true })
-      } catch (err) {
-        next(Error('Unable to parse json from Youtube API response: ' + err.message))
-      }
-    })
-  }).on('error', next)
+  api(url, (err, json) => err ? next(err) : res.render('search', { json }))
 }

@@ -9,6 +9,7 @@ const readyRoute = require('./routes/ready.js')
 const downloadRoute = require('./routes/download.js')
 const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
+const metadataRoute = require('./routes/metadata.js')
 
 console.debug('NODE_ENV=' + process.env.NODE_ENV)
 
@@ -32,6 +33,8 @@ app.post('/download', downloadRoute)
 app.get('/progress/:id', progressRoute)
 
 app.post('/update', updateRoute)
+
+app.get('/metadata', metadataRoute)
 
 app.use('/assets', express.static('assets'))
 
