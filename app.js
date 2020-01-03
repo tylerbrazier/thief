@@ -5,6 +5,7 @@ const mkdirSync = require('fs').mkdirSync
 const exec = require('child_process').exec
 const conf = require('./conf.js')
 const searchRoute = require('./routes/search.js')
+const readyRoute = require('./routes/ready.js')
 const downloadRoute = require('./routes/download.js')
 const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
@@ -17,6 +18,10 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => res.render('index', { destRoute: conf.DEST_ROUTE }))
+
+app.get('/ready', readyRoute.get)
+app.use('/ready', bodyParser.urlencoded({ extended: true }))
+app.post('/ready', readyRoute.post)
 
 app.use('/search', bodyParser.urlencoded({ extended: true }))
 app.post('/search', searchRoute)

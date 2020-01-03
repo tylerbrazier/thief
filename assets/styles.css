@@ -1,15 +1,17 @@
 h1 {
   font-size: large;
 }
-form {
+
+form.spaced {
   max-width: 500px;
+  margin-bottom: 20px;
 }
 
-form > div {
+form.spaced > div {
   margin-top: 10px;
 }
 
-input[type=text] {
+input[type=text], input[type=url], input[type=search] {
   width: 100%;
   padding: 4px;
 
@@ -23,4 +25,17 @@ button {
 
 .error {
   color: red;
+}
+
+.search-result.playlist {
+  background-color: deepskyblue;
+}
+.search-result > .preview {
+  display: flex;
+}
+.search-result > .preview > .info {
+  margin-left: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }

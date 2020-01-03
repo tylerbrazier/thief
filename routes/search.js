@@ -5,13 +5,13 @@ const conf = require('../conf.js')
 
 module.exports = function route (req, res, next) {
   if (!req.body) return next(Error('No body on request'))
-  if (!req.body.q) return next(Error('Search query is required'))
+  if (!req.body.search) return next(Error('Search term is required'))
 
   const url = 'https://www.googleapis.com/youtube/v3/search?' + [
     'key=' + conf.YOUTUBE_API_KEY,
     'part=id,snippet',
     'maxResults=' + conf.MAX_SEARCH_RESULTS,
-    'q=' + encodeURIComponent(req.body.q),
+    'q=' + encodeURIComponent(req.body.search),
     'type=video,playlist'
   ].join('&')
 

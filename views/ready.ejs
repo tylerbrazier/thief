@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/assets/styles.css">
+
+<title>Thief</title>
+
+<h1>Download video/audio from Youtube</h1>
+
+<form action="/download" method="post" class="spaced">
+  <div>
+    <label for="url">Youtube URL</label>
+    <input type="url" id="url" name="url" value="<%= url %>" autofocus required>
+  </div>
+  <div>
+    <label for="format">Format</label>
+    <input type="text" id="format" name="format" value="best">
+  </div>
+  <div>
+    <input type="checkbox" id="addMeta" name="addMeta" checked>
+    <label for="addMeta">Include metadata (tags)</label>
+  </div>
+  <div>
+    <input type="checkbox" id="audioOnly" name="audioOnly" checked>
+    <label for="audioOnly">Audio only</label>
+  </div>
+  <div>
+    <button type="submit">Submit</button>
+  </div>
+</form>
+
+<div>
+  <p>Back to <a href="/">home</a></p>
+</div>

@@ -7,29 +7,17 @@
 
 <h1>Download video/audio from Youtube</h1>
 
-<form action="/download" method="post">
+<form action="/search" method="post" class="spaced">
   <div>
-    <label for="url">Youtube URL</label>
-    <input type="text" id="url" name="url" autofocus>
+    <input type="search" id="search" name="search" placeholder="Search" autofocus required>
   </div>
   <div>
-    <label for="format">Format</label>
-    <input type="text" id="format" name="format" placeholder="Default: 'best'">
-  </div>
-  <div>
-    <input type="checkbox" id="addMeta" name="addMeta" checked>
-    <label for="addMeta">Include metadata (tags)</label>
-  </div>
-  <div>
-    <input type="checkbox" id="audioOnly" name="audioOnly" checked>
-    <label for="audioOnly">Audio only</label>
-  </div>
-  <div>
-    <button type="submit">Submit</button>
+    <button type="submit">Search</button>
+    Or <a href="/ready">download by URL</a>
   </div>
 </form>
 
-<form action="/update" method="post">
+<form action="/update" method="post" class="spaced">
   <div>
     <button type="submit">Update youtube-dl</button>
   </div>
