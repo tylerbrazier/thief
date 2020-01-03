@@ -34,11 +34,21 @@
               playlist
               <% } %>
             </button>
+            <button type="button"
+                    class="get-more-info"
+                    data-type="<%= item.id.kind.replace('youtube#', '') %>"
+                    data-id="<%= item.id.videoId || item.id.playlistId %>">
+              More info <noscript>(requires javascript)</noscript>
+            </button>
           </form>
         </div>
       </div>
+    </div>
+    <div class="more-info hidden" data-id="<%= item.id.videoId || item.id.playlistId %>">
     </div>
   </div>
   <hr>
   <% }) %>
 </div>
+
+<script src="/assets/search.js"></script>

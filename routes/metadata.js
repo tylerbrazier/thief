@@ -9,15 +9,15 @@ module.exports = function get (req, res, next) {
   if (!id || typeof id !== 'string') return badReq(res, 'id is required')
   if (!['video', 'playlist'].includes(type)) return badReq(res, 'invalid type')
 
-  const url = `https://www.googleapis.com/youtube/v3/${req.query.type}s?` + [
+  const url = `https://www.googleapis.com/youtube/v3/${type}s?` + [
     'key=' + conf.YOUTUBE_API_KEY,
-    'id=' + req.query.id,
+    'id=' + id,
     'part=snippet'
   ].join('&')
 
   api(url, (err, json) => err ? badReq(res, err.message) : res.json(json))
 }
 
-function badReq (res, message) {
-  res.status(400).json({ message })
+function badReq (res, error) {
+  res.status(400).json({ error })
 }

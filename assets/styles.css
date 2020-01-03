@@ -39,3 +39,11 @@ button {
   flex-direction: column;
   justify-content: space-evenly;
 }
+
+.more-info {
+  padding: 8px;
+}
+
+.hidden {
+  display: none;
+}
