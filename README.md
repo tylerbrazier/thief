@@ -11,7 +11,13 @@ For development:
 To build the docker image and run the container locally:
 
     docker build -t thief .
-    docker run --init -p 8080:8080 thief
+    docker run --init -p 80:8080 thief
+
+Add `--restart=unless-stopped` to run on host startup.
+
+If there's networking issues when building/running, add
+`--network host` to the build & run commands and use
+`--env PORT=80` instead of `-p 80:8080` for run.
 
 To build and deploy on heroku (production):
 
@@ -24,4 +30,4 @@ To build and deploy on heroku (production):
 <https://devcenter.heroku.com/articles/free-dyno-hours>
 
 ## TODO
-- Search
+- Search (in progress on `search` branch)
