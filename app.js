@@ -34,7 +34,8 @@ app.get('/progress/:id', progressRoute)
 
 app.post('/update', updateRoute)
 
-app.get('/metadata', metadataRoute)
+app.get('/metadata/video/:id', metadataRoute.video)
+app.get('/metadata/playlist/:id', metadataRoute.playlist)
 
 app.use('/assets', express.static('assets'))
 

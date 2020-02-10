@@ -7,9 +7,17 @@
 
 <h1>Download video/audio from Youtube</h1>
 
-<form action="/search" method="post" class="spaced">
+<form action="/search" method="post" class="margined">
   <div>
     <input type="search" id="search" name="search" placeholder="Search" autofocus required>
+  </div>
+  <div>
+    <input type="checkbox" id="videos" name="videos" checked>
+    <label for="videos">Videos</label>
+  </div>
+  <div>
+    <input type="checkbox" id="playlists" name="playlists" checked>
+    <label for="playlists">Playlists</label>
   </div>
   <div>
     <button type="submit">Search</button>
@@ -17,7 +25,7 @@
   </div>
 </form>
 
-<form action="/update" method="post" class="spaced">
+<form action="/update" method="post" class="margined">
   <div>
     <button type="submit">Update youtube-dl</button>
   </div>

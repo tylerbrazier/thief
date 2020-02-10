@@ -1,23 +1,22 @@
-const api = require('../tools/api.js')
 const conf = require('../conf.js')
+const proxy = require('http-proxy-middleware')
 
 // https://developers.google.com/youtube/v3/docs/videos/list
-// https://developers.google.com/youtube/v3/docs/playlists/list
+// https://developers.google.com/youtube/v3/docs/playlistItems/list
 
-module.exports = function get (req, res, next) {
-  const { id, type } = req.query
-  if (!id || typeof id !== 'string') return badReq(res, 'id is required')
-  if (!['video', 'playlist'].includes(type)) return badReq(res, 'invalid type')
+exports.video = makeProxy('videos')
+exports.playlist = makeProxy('playlists') // TODO use playlistItems
 
-  const url = `https://www.googleapis.com/youtube/v3/${type}s?` + [
-    'key=' + conf.YOUTUBE_API_KEY,
-    'id=' + id,
-    'part=snippet'
-  ].join('&')
-
-  api(url, (err, json) => err ? badReq(res, err.message) : res.json(json))
-}
-
-function badReq (res, error) {
-  res.status(400).json({ error })
+function makeProxy (type) {
+  return proxy({
+    logLevel: 'silent',
+    changeOrigin: true,
+    target: 'https://www.googleapis.com',
+    pathRewrite: function (path, req) {
+      return `/youtube/v3/${type}` +
+        '?key=' + conf.YOUTUBE_API_KEY +
+        '&part=snippet' +
+        '&id=' + req.params.id
+    }
+  })
 }

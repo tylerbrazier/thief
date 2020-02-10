@@ -6,6 +6,7 @@
   "dependencies": {
     "ejs": "^2.7.4",
     "express": "^4.17.1",
+    "http-proxy-middleware": "^0.20.0",
     "serve-index": "^1.9.1",
     "tar": "^5.0.5",
     "uuid": "^3.3.3"

@@ -8,7 +8,7 @@ function onclick () {
   if (moreInfo.classList.contains('loaded')) return
 
   moreInfo.innerHTML = '<progress></progress>'
-  fetch('/metadata?id=' + this.dataset.id + '&type=' + this.dataset.type)
+  fetch('/metadata/' + this.dataset.type + '/' + this.dataset.id)
     .then(function (res) { return res.json() })
     .then(function (json) {
       if (json.error) showError(moreInfo, json.error)
@@ -24,6 +24,6 @@ function showInfo (ele, json) {
 }
 
 function showError (ele, message) {
-  ele.innerText = message
+  ele.innerText = JSON.stringify(message)
   ele.classList.add('loaded', 'error')
 }
