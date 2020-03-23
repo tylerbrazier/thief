@@ -15,7 +15,7 @@ module.exports = function route (req, res, next) {
     'part=id,snippet',
     'maxResults=' + conf.MAX_SEARCH_RESULTS,
     'q=' + encodeURIComponent(search),
-    'type=' + [ videos ? 'video' : '', playlists ? 'playlist' : ''].join(',')
+    'type=' + [videos ? 'video' : '', playlists ? 'playlist' : ''].join(',')
   ].join('&')
 
   api(url, (err, json) => err ? next(err) : res.render('search', { json }))

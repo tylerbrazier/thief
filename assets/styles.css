@@ -28,7 +28,8 @@ button {
 }
 
 .search-result.playlist {
-  background-color: deepskyblue;
+  border-left: 8px dashed;
+  padding-left: 8px;
 }
 .search-result > .preview {
   display: flex;

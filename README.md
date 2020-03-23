@@ -2,7 +2,10 @@
 
 Web service for downloading youtube videos and songs.
 
-For development:
+For development, first go to <https://console.cloud.google.com/>,
+create a project, enable youtube v3 api, and add an API key;
+make a file containing the key named `YOUTUBE_API_KEY` at the project root.
+Then run:
 
     sudo npm install -g nodemon  # if you don't have it
     npm install
@@ -31,3 +34,8 @@ To build and deploy on heroku (production):
 
 ## TODO
 - Search (in progress on `search` branch)
+- skip deleted videos
+- clean up uuid dirs in tmp
+- add some kind of `/gc` route to clean up in `/downloads`
+- search pagination
+- playlist contents in search

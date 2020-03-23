@@ -17,7 +17,6 @@ function readApiKey () {
     return readFileSync(join(__dirname, 'YOUTUBE_API_KEY'), 'utf8').trim()
   } catch (err) {
     console.error(err)
-    console.log('For development, make a YOUTUBE_API_KEY file containing the key.')
     return ''
   }
 }
