@@ -7,7 +7,7 @@ module.exports = {
   DEST_DIR: join(tmpdir(), 'thief'), // where downloads are saved
   DEST_ROUTE: '/downloads',
   YOUTUBE_API_KEY: readApiKey(),
-  MAX_SEARCH_RESULTS: process.env.MAX_SEARCH_RESULTS || 20
+  MAX_PAGE_SIZE: process.env.MAX_PAGE_SIZE || 20 // for search results and playlist items
 }
 
 function readApiKey () {

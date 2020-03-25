@@ -9,7 +9,6 @@ const readyRoute = require('./routes/ready.js')
 const downloadRoute = require('./routes/download.js')
 const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
-const metadataRoute = require('./routes/metadata.js')
 
 console.debug('NODE_ENV=' + process.env.NODE_ENV)
 
@@ -20,9 +19,7 @@ app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => res.render('index', { destRoute: conf.DEST_ROUTE }))
 
-app.get('/ready', readyRoute.get)
-app.use('/ready', bodyParser.urlencoded({ extended: true }))
-app.post('/ready', readyRoute.post)
+app.get('/ready', readyRoute)
 
 app.use('/search', bodyParser.urlencoded({ extended: true }))
 app.post('/search', searchRoute)
@@ -34,9 +31,6 @@ app.get('/progress/:id', progressRoute)
 
 app.post('/update', updateRoute)
 
-app.get('/metadata/video/:id', metadataRoute.video)
-app.get('/metadata/playlist/:id', metadataRoute.playlist)
-
 app.use('/assets', express.static('assets'))
 
 app.use(conf.DEST_ROUTE, serveIndex(conf.DEST_DIR))
@@ -44,13 +38,13 @@ app.use(conf.DEST_ROUTE, express.static(conf.DEST_DIR))
 
 // not found route
 app.use((req, res, next) => {
-  res.status(404).render('message', { text: '404 not found', isError: true })
+  res.status(404).render('error', { error: '404 not found' })
 })
 
 // error route
 app.use((err, req, res, next) => {
   console.error(err)
-  res.status(500).render('message', { text: err.message || err, isError: true })
+  res.status(500).render('error', { error: err })
 })
 
 mkdirSync(conf.DEST_DIR, { recursive: true })

@@ -5,30 +5,36 @@
 
 <title>Thief</title>
 
-<h1>Download video/audio from Youtube</h1>
+<div class="home-link">Back to <a href="/">home</a></div>
 
-<form action="/download" method="post" class="margined">
-  <div>
-    <label for="url">Youtube URL</label>
-    <input type="url" id="url" name="url" value="<%= url %>" autofocus required>
-  </div>
-  <div>
-    <label for="format">Format</label>
-    <input type="text" id="format" name="format" value="best">
-  </div>
-  <div>
-    <input type="checkbox" id="addMeta" name="addMeta" checked>
-    <label for="addMeta">Include metadata (tags)</label>
-  </div>
-  <div>
-    <input type="checkbox" id="audioOnly" name="audioOnly" checked>
-    <label for="audioOnly">Audio only</label>
-  </div>
-  <div>
-    <button type="submit">Submit</button>
-  </div>
-</form>
+<div class="ready-container">
+  <form action="/download" method="post">
+    <h1>Download <%= (details && details.type) || 'by URL' %></h1>
+    <div>
+      <label for="url">Youtube URL</label>
+      <input type="url" id="url" name="url" value="<%= url %>" autofocus required>
+    </div>
+    <div>
+      <label for="format">Format</label>
+      <input type="text" id="format" name="format" value="best">
+    </div>
+    <div>
+      <input type="checkbox" id="addMeta" name="addMeta" checked>
+      <label for="addMeta">Include metadata (tags)</label>
+    </div>
+    <div>
+      <input type="checkbox" id="audioOnly" name="audioOnly" checked>
+      <label for="audioOnly">Audio only</label>
+    </div>
+    <div>
+      <button type="submit">Download</button>
+    </div>
+  </form>
 
-<div>
-  <p>Back to <a href="/">home</a></p>
+  <% if (details) { %>
+  <div>
+    <h2><%= details.type.charAt(0).toUpperCase() + details.type.slice(1) %> details</h2>
+    <%- include('details', { details }) %>
+  </div>
+  <% } %>
 </div>

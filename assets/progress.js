@@ -9,25 +9,27 @@
 
 /* eslint-env browser */
 
-var output = document.getElementById('output')
-var eventSourceUrl = document.getElementById('eventSourceUrl').value
-var downloadLink = document.getElementById('download')
-var eventSource = new EventSource(eventSourceUrl)
+(function () {
+  var output = document.getElementById('output')
+  var eventSourceUrl = document.getElementById('eventSourceUrl').value
+  var downloadLink = document.getElementById('download')
+  var eventSource = new EventSource(eventSourceUrl)
 
-output.innerHTML = 'Requesting progress updates...'
+  output.innerHTML = 'Requesting progress updates...'
 
-eventSource.addEventListener('progress', function (event) {
-  output.innerHTML = event.data + '<br>' + output.innerHTML
-})
+  eventSource.addEventListener('progress', function (event) {
+    output.innerHTML = event.data + '<br>' + output.innerHTML
+  })
 
-eventSource.addEventListener('done', function (event) {
-  downloadLink.setAttribute('href', event.data)
-  downloadLink.innerText = event.data
-  eventSource.close()
-})
+  eventSource.addEventListener('done', function (event) {
+    downloadLink.setAttribute('href', event.data)
+    downloadLink.innerText = event.data
+    eventSource.close()
+  })
 
-eventSource.addEventListener('error', function (event) {
-  var message = event.data || 'Error'
-  output.innerHTML = '<span class="error">' + message + '</span><br>' + output.innerHTML
-  eventSource.close()
-})
+  eventSource.addEventListener('error', function (event) {
+    var message = event.data || 'Error'
+    output.innerHTML = '<span class="error">' + message + '</span><br>' + output.innerHTML
+    eventSource.close()
+  })
+}())

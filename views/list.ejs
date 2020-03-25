@@ -1,0 +1,12 @@
+<div>
+  <% list.entries.forEach(function(details) { %>
+    <% if (['search', 'playlist'].includes(list.type)) { %>
+      <a class="details-link" href="/ready?id=<%= details.id %>&type=<%= details.type %>">
+        <%- include('details', { details }) %>
+      </a>
+    <% } else {%>
+      <%- include('details', { details }) %>
+    <% } %>
+    <hr>
+  <% }) %>
+</div>

@@ -1,0 +1,35 @@
+<div class="details">
+  <div class="preview <% if (details.type === 'playlist') { %>playlist<% } %>">
+    <img src="<%= details.thumbnail %>" alt="thumbnail" width="120" height="90">
+    <div class="info">
+      <div class="title"><b><%= details.title %></b></div>
+      <% if (details.channel) { %>
+        <div class="channel"><%= details.channel %></div>
+      <% } %>
+      <% if (details.type === 'playlist') { %>
+        <div>(playlist)</div>
+      <% } %>
+    </div>
+  </div>
+  <% if (details.duration) { %>
+    <div class="detail"><b>Duration:</b> <%= details.duration %></div>
+  <% } %>
+  <% if (details.track) { %>
+    <div class="detail"><b>Song:</b> <%= details.track %></div>
+  <% } %>
+  <% if (details.artist) { %>
+    <div class="detail"><b>Artist:</b> <%= details.artist %></div>
+  <% } %>
+  <% if (details.album) { %>
+    <div class="detail"><b>Album:</b> <%= details.album %></div>
+  <% } %>
+  <% if (details.description) { %>
+    <div class="detail keep-newlines"><b>Description:</b>
+      <%= details.description %>
+    </div>
+  <% } %>
+  <% if (details.entries) { %>
+    <hr>
+    <%- include('list', { list: details }) %>
+  <% } %>
+</div>

@@ -5,25 +5,17 @@
 
 <title>Thief</title>
 
+<div class="home-link">Back to <a href="/">home</a></div>
+
 <input type="hidden" id="eventSourceUrl" value="<%= eventSourceUrl %>">
 
 <noscript>
-  <p>
   Progress updates requires javascript. File will be here when finished:
   <a href="<%= destRoute %>"><%= destRoute %></a>
-  </p>
 </noscript>
 
-<div>
-  <p>Back to <a href="/">home</a></p>
-</div>
+<div class="file-link"><a id="download" href="" download></a></div>
 
-<div>
-  <a id="download" href="" download></a>
-</div>
-
-<div>
-  <p id="output"></p>
-</div>
+<div id="output"></div>
 
 <script src="/assets/progress.js"></script>

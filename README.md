@@ -38,4 +38,4 @@ To build and deploy on heroku (production):
 - clean up uuid dirs in tmp
 - add some kind of `/gc` route to clean up in `/downloads`
 - search pagination
-- playlist contents in search
+- possibly load details asynchronously with js

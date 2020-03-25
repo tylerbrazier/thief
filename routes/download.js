@@ -20,5 +20,5 @@ module.exports = function route (req, res, next) {
 }
 
 function badRequest (res, message) {
-  res.status(400).render('message', { text: message, isError: true })
+  res.status(400).render('error', { error: message })
 }
