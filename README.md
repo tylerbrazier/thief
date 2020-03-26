@@ -33,9 +33,9 @@ To build and deploy on heroku (production):
 <https://devcenter.heroku.com/articles/free-dyno-hours>
 
 ## TODO
-- Search (in progress on `search` branch)
 - skip deleted videos
 - clean up uuid dirs in tmp
 - add some kind of `/gc` route to clean up in `/downloads`
-- search pagination
-- possibly load details asynchronously with js
+- paginate lists
+- embedded video preview on `/ready` page
+- favicon

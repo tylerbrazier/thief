@@ -9,6 +9,7 @@ const readyRoute = require('./routes/ready.js')
 const downloadRoute = require('./routes/download.js')
 const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
+const detailsRoute = require('./routes/details.js')
 
 console.debug('NODE_ENV=' + process.env.NODE_ENV)
 
@@ -23,6 +24,9 @@ app.get('/ready', readyRoute)
 
 app.use('/search', bodyParser.urlencoded({ extended: true }))
 app.post('/search', searchRoute)
+
+app.get('/details/video/:id', detailsRoute.video)
+app.get('/details/playlist/:id', detailsRoute.playlist)
 
 app.use('/download', bodyParser.urlencoded({ extended: true }))
 app.post('/download', downloadRoute)

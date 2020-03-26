@@ -36,5 +36,8 @@
     <h2><%= details.type.charAt(0).toUpperCase() + details.type.slice(1) %> details</h2>
     <%- include('details', { details }) %>
   </div>
+  <% } else if (url) { %>
+  <div id="async-details"></div>
+  <script src="/assets/ready.js"></script>
   <% } %>
 </div>
