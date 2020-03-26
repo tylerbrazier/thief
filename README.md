@@ -14,13 +14,13 @@ Then run:
 To build the docker image and run the container locally:
 
     docker build -t thief .
-    docker run --init -p 80:8080 thief
+    docker run --init -p 80:8080 --env YOUTUBE_API_KEY=... thief
 
-Add `--restart=unless-stopped` to run on host startup.
-
-If there's networking issues when building/running, add
-`--network host` to the build & run commands and use
-`--env PORT=80` instead of `-p 80:8080` for run.
+- Include `-d` to run in the background
+- Add `--restart=unless-stopped` to run on host startup.
+- If there's networking issues when building/running, add
+  `--network host` to the build & run commands and use
+  `--env PORT=80` instead of `-p 80:8080` for run.
 
 To build and deploy on heroku (production):
 
