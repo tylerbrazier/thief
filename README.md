@@ -34,7 +34,6 @@ To build and deploy on heroku (production):
 
 ## TODO
 - skip deleted videos
-- clean up uuid dirs in tmp
 - add some kind of `/gc` route to clean up in `/downloads`
 - paginate lists
 - embedded video preview on `/ready` page

@@ -9,6 +9,7 @@ const { promisify } = require('util')
 const pmkdir = promisify(fs.mkdir)
 const preaddir = promisify(fs.readdir)
 const prename = promisify(fs.rename)
+const prmdir = promisify(fs.rmdir)
 
 module.exports = class Job {
   constructor (id, url, addMeta, audioOnly, format) {
@@ -35,6 +36,7 @@ module.exports = class Job {
   async run () {
     try {
       await pmkdir(this.dir, { recursive: true })
+      console.log('Working dir ' + this.dir)
       await this._download({
         url: this.url,
         dir: this.dir,
@@ -52,14 +54,17 @@ module.exports = class Job {
         const tgz = await this._compress(join(this.dir, playlistDir))
 
         await prename(tgz, join(conf.DEST_DIR, basename(tgz)))
-
         this.emitter.emit('done', basename(tgz))
+
+        await this._cleanup()
       } else {
         const filename = await this._getFirstFilename()
         if (!filename) throw Error('Unable to find downloaded file')
 
         await prename(join(this.dir, filename), join(conf.DEST_DIR, filename))
         this.emitter.emit('done', filename)
+
+        await this._cleanup()
       }
     } catch (err) {
       this.emitter.emit('error', err.message)
@@ -106,5 +111,10 @@ module.exports = class Job {
       cwd: join(dir, '..'),
       file: filepath
     }, [ basename(dir) ]).then(() => filepath)
+  }
+
+  _cleanup () {
+    console.log('Removing ' + this.dir)
+    return prmdir(this.dir, { recursive: true }) // XXX recursive is experimental in node 12
   }
 }
