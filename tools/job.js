@@ -12,14 +12,15 @@ const prename = promisify(fs.rename)
 const prmdir = promisify(fs.rmdir)
 
 module.exports = class Job {
-  constructor (id, url, addMeta, audioOnly, format) {
+  constructor (id, options) {
     this.id = id
-    this.url = url
-    this.addMeta = addMeta
-    this.audioOnly = audioOnly
-    this.format = format
+    this.url = options.url
+    this.addMeta = options.addMeta
+    this.audioOnly = options.audioOnly
+    this.format = options.format
+    this.ignoreErrors = options.ignoreErrors
     this.dir = join(tmpdir(), id)
-    this.isPlaylist = url.pathname.startsWith('/playlist')
+    this.isPlaylist = options.url.pathname.startsWith('/playlist')
     this.progressBuffer = []
     this.emitter = new KeepAliveEmitter()
     // Events from emitter:
@@ -77,6 +78,7 @@ module.exports = class Job {
       if (this.addMeta) args.push('--add-metadata')
       if (this.audioOnly) args.push('-x')
       if (this.audioOnly) args.push('--audio-format', this.format)
+      if (this.ignoreErrors) args.push('--ignore-errors')
       else args.push('--format', this.format)
       let outputTemplate = '%(title)s.%(ext)s'
       if (this.isPlaylist) outputTemplate = '%(playlist)s/%(playlist_index)s-' + outputTemplate
@@ -92,7 +94,7 @@ module.exports = class Job {
       proc.stderr.on('data', ondata)
       proc.on('error', reject)
       proc.on('close', (code) => {
-        if (code === 0) {
+        if (code === 0 || this.ignoreErrors) {
           this.emitter.emit('progress', 'Finished downloading')
           resolve()
         } else reject(Error('youtube-dl exited with ' + code))

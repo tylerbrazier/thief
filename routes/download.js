@@ -2,8 +2,6 @@ const conf = require('../conf.js')
 const pool = require('../tools/jobPool.js')
 
 module.exports = function route (req, res, next) {
-  if (!req.body) return next(Error('No body on request'))
-
   try {
     var url = new URL(req.body.url)
   } catch (err) {
@@ -13,9 +11,9 @@ module.exports = function route (req, res, next) {
   const format = req.body.format || 'best'
   if (!/^[a-z0-9]+$/.test(format)) return badRequest(res, 'Invalid format')
 
-  const { addMeta, audioOnly } = req.body
+  const { addMeta, audioOnly, ignoreErrors } = req.body
 
-  const id = pool.create(url, addMeta, audioOnly, format)
+  const id = pool.create({ url, addMeta, audioOnly, ignoreErrors, format })
   res.render('download', { eventSourceUrl: '/progress/' + id, destRoute: conf.DEST_ROUTE })
 }
 

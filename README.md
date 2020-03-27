@@ -33,7 +33,6 @@ To build and deploy on heroku (production):
 <https://devcenter.heroku.com/articles/free-dyno-hours>
 
 ## TODO
-- skip deleted videos
 - add some kind of `/gc` route to clean up in `/downloads`
 - paginate lists
 - embedded video preview on `/ready` page
