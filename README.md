@@ -2,9 +2,13 @@
 
 Web service for downloading youtube videos and songs.
 
-For development, first go to <https://console.cloud.google.com/>,
+## Development
+First go to <https://console.cloud.google.com/>,
 create a project, enable youtube v3 api, and add an API key;
 make a file containing the key named `YOUTUBE_API_KEY` at the project root.
+
+Get `youtube-dl` from <http://ytdl-org.github.io/youtube-dl/download.html>
+
 Then run:
 
     sudo npm install -g nodemon  # if you don't have it
@@ -22,7 +26,8 @@ To build the docker image and run the container locally:
   `--network host` to the build & run commands and use
   `--env PORT=80` instead of `-p 80:8080` for run.
 
-To build and deploy on heroku (production):
+## Production
+To build and deploy on heroku:
 
     npm version <major|minor|patch>
 
@@ -37,3 +42,4 @@ To build and deploy on heroku (production):
 - paginate lists
 - embedded video preview on `/ready` page
 - favicon
+- configurable path to youtube-dl executable
