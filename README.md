@@ -5,7 +5,7 @@ Web service for downloading youtube videos and songs.
 ## Development
 First go to <https://console.cloud.google.com/>,
 create a project, enable youtube v3 api, and add an API key;
-make a file containing the key named `YOUTUBE_API_KEY` at the project root.
+then make a `.env` file at the project root with `YOUTUBE_API_KEY=<key>`.
 
 Get `youtube-dl` from <http://ytdl-org.github.io/youtube-dl/download.html>
 
@@ -42,4 +42,3 @@ To build and deploy on heroku:
 - paginate lists
 - embedded video preview on `/ready` page
 - favicon
-- configurable path to youtube-dl executable

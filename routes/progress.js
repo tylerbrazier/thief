@@ -15,7 +15,7 @@ module.exports = function route (req, res, next) {
   if (!job) return next(Error('No job with id ' + req.params.id))
 
   res.writeHead(200, {
-    'Connection': 'keep-alive',
+    Connection: 'keep-alive',
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache'
   })

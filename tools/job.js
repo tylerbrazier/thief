@@ -74,7 +74,7 @@ module.exports = class Job {
 
   _download () {
     return new Promise((resolve, reject) => {
-      const args = [ '--restrict-filenames', '--newline' ]
+      const args = ['--restrict-filenames', '--newline']
       if (this.addMeta) args.push('--add-metadata')
       if (this.audioOnly) args.push('-x')
       if (this.audioOnly) args.push('--audio-format', this.format)
@@ -86,7 +86,7 @@ module.exports = class Job {
       args.push(this.url.toString())
 
       this.emitter.emit('progress', 'youtube-dl ' + args.join(' '))
-      const proc = spawn('youtube-dl', args, { cwd: this.dir })
+      const proc = spawn(conf.YOUTUBE_DL_EXE, args, { cwd: this.dir })
 
       // wire up event emitting
       const ondata = data => this.emitter.emit('progress', data.toString().trim())
@@ -112,7 +112,7 @@ module.exports = class Job {
       gzip: true,
       cwd: join(dir, '..'),
       file: filepath
-    }, [ basename(dir) ]).then(() => filepath)
+    }, [basename(dir)]).then(() => filepath)
   }
 
   _cleanup () {

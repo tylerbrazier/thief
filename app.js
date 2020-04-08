@@ -13,6 +13,8 @@ const detailsRoute = require('./routes/details.js')
 
 console.debug('NODE_ENV=' + process.env.NODE_ENV)
 
+if (!conf.YOUTUBE_API_KEY) console.warn('WARNING: NO YOUTUBE_API_KEY')
+
 const app = express()
 
 app.set('views', './views')
@@ -55,7 +57,7 @@ mkdirSync(conf.DEST_DIR, { recursive: true })
 
 if (process.env.NODE_ENV === 'production') {
   console.log('Updating youtube-dl...')
-  exec('youtube-dl --update', (err, stdout, stderr) => {
+  exec(conf.YOUTUBE_DL_EXE + ' --update', (err, stdout, stderr) => {
     if (err) console.error(err)
     if (stderr) process.stderr.write(stderr)
     if (stdout) process.stdout.write(stdout)

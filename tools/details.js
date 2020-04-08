@@ -1,5 +1,6 @@
 const exec = require('child_process').exec
 const api = require('./api.js')
+const conf = require('../conf.js')
 
 // callback in the form (err, details)
 // the details object will be different depending on type
@@ -10,7 +11,7 @@ module.exports = function details (id, type, callback) {
 }
 
 function videoDetails (id, callback) {
-  exec('youtube-dl -j https://youtu.be/' + id, (err, stdout, stderr) => {
+  exec(`${conf.YOUTUBE_DL_EXE} -j https://youtu.be/${id}`, (err, stdout, stderr) => {
     if (err) return callback(err)
     try {
       const json = JSON.parse(stdout)
