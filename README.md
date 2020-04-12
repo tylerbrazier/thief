@@ -40,5 +40,4 @@ To build and deploy on heroku:
 ## TODO
 - add some kind of `/gc` route to clean up in `/downloads`
 - paginate lists
-- embedded video preview on `/ready` page
 - favicon

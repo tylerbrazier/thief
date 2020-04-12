@@ -1,16 +1,12 @@
 <div class="details">
-  <div class="preview <% if (details.type === 'playlist') { %>playlist<% } %>">
-    <img src="<%= details.thumbnail %>" alt="thumbnail" width="120" height="90">
-    <div class="info">
-      <div class="title"><b><%= details.title %></b></div>
-      <% if (details.channel) { %>
-        <div class="channel"><%= details.channel %></div>
-      <% } %>
-      <% if (details.type === 'playlist') { %>
-        <div>(playlist)</div>
-      <% } %>
-    </div>
-  </div>
+  <!-- Ideally there'd be an embedded video here but it seems that will only work over https :( -->
+  <img class="thumbnail" src="<%= details.thumbnail %>" alt="thumbnail">
+  <% if (details.title) { %>
+    <div class="detail"><b>Title:</b> <%= details.title %></div>
+  <% } %>
+  <% if (details.channel) { %>
+    <div class="detail"><b>Channel:</b> <%= details.channel %></div>
+  <% } %>
   <% if (details.duration) { %>
     <div class="detail"><b>Duration:</b> <%= details.duration %></div>
   <% } %>

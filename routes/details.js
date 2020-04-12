@@ -1,4 +1,4 @@
-// Used like an api endpoint to details html to be injected into the /ready page
+// Used like an api endpoint to send details html to be injected into the /ready page
 
 const detailsTool = require('../tools/details.js')
 const validId = require('../tools/validator.js').validId

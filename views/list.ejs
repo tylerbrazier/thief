@@ -1,12 +1,21 @@
-<div>
+<div class="list">
   <% list.entries.forEach(function(details) { %>
-    <% if (['search', 'playlist'].includes(list.type)) { %>
-      <a class="details-link" href="/ready?id=<%= details.id %>&type=<%= details.type %>">
-        <%- include('details', { details }) %>
-      </a>
-    <% } else {%>
-      <%- include('details', { details }) %>
-    <% } %>
+    <div class="list-entry <% if (details.type === 'playlist') { %>playlist<% } %>">
+      <img src="<%= details.thumbnail %>" alt="thumbnail" width="120" height="90">
+      <div class="info">
+        <div class="title">
+          <a class="details-link" href="/ready?id=<%= details.id %>&type=<%= details.type %>">
+            <%= details.title %>
+          </a>
+        </div>
+        <% if (details.channel) { %>
+          <div class="channel"><%= details.channel %></div>
+        <% } %>
+        <% if (details.type === 'playlist') { %>
+          <div>(playlist)</div>
+        <% } %>
+      </div>
+    </div>
     <hr>
   <% }) %>
 </div>

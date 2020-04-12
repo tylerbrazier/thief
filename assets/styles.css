@@ -40,22 +40,23 @@ button {
 .error {
   color: red;
 }
-.details-link {
-  color: inherit;
-  text-decoration: none;
+
+.list-entry {
+  display: flex;
 }
-.preview.playlist {
+.list-entry.playlist {
   border-left: 8px double;
   padding-left: 4px;
 }
-.details > .preview {
-  display: flex;
-}
-.details > .preview > .info {
+.list-entry > .info {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   margin-left: 8px;
+}
+
+.details > .thumbnail {
+  max-width: 300px;
 }
 .details > .detail {
   margin-top: 4px;
