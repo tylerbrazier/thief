@@ -3,6 +3,21 @@ h1, h2 {
   text-align: center;
 }
 
+form > div {
+  margin-bottom: 10px;
+}
+
+input[type=text], input[type=url], input[type=search] {
+  width: 100%;
+  padding: 4px;
+  /* prevent field from running off the end of the page (https://stackoverflow.com/a/46991460) */
+  box-sizing: border-box;
+}
+
+button {
+  padding: 4px;
+}
+
 .home-container {
   /* center on page */
   margin-left: auto;
@@ -20,21 +35,6 @@ h1, h2 {
 .home-link {
   margin-top: 18px;
   margin-bottom: 18px;
-}
-
-form > div {
-  margin-bottom: 10px;
-}
-
-input[type=text], input[type=url], input[type=search] {
-  width: 100%;
-  padding: 4px;
-  /* prevent field from running off the end of the page (https://stackoverflow.com/a/46991460) */
-  box-sizing: border-box;
-}
-
-button {
-  padding: 4px;
 }
 
 .error {
