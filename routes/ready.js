@@ -15,16 +15,8 @@ module.exports = function ready (req, res, next) {
   if (type === 'video') url = 'https://www.youtube.com/watch?v=' + id
   if (type === 'playlist') url = 'https://www.youtube.com/playlist?list=' + id
 
-  // Loading video details using youtube-dl is slow, so in order to render this
-  // page right away we can fetch the details asynchronously using client side ajax.
-  // If query params include async=1 then use ajax (client has js enabled);
-  // otherwise fall back to waiting to render the page until details are finished.
-  if (['1', 'true'].includes(async)) {
-    res.render('ready', { url, details: null })
-  } else {
-    detailsTool(id, type, (err, details) => {
-      if (err) return next(err)
-      res.render('ready', { url, details })
-    })
-  }
+  detailsTool(id, type, (err, details) => {
+    if (err) return next(err)
+    res.render('ready', { url, details })
+  })
 }
