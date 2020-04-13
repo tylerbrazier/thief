@@ -24,8 +24,7 @@ app.get('/', (req, res) => res.render('index', { destRoute: conf.DEST_ROUTE }))
 
 app.get('/ready', readyRoute)
 
-app.use('/search', bodyParser.urlencoded({ extended: true }))
-app.post('/search', searchRoute)
+app.get('/search', searchRoute)
 
 app.get('/details/video/:id', detailsRoute.video)
 app.get('/details/playlist/:id', detailsRoute.playlist)
