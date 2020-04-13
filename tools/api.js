@@ -68,7 +68,7 @@ function normalizePlaylistResponse (json) {
     title: json.items[0].snippet.title,
     channel: json.items[0].snippet.channelTitle,
     description: json.items[0].snippet.description,
-    thumbnail: json.items[0].snippet.thumbnails.default.url
+    thumbnail: json.items[0].snippet.thumbnails.medium.url
   }
 }
 
