@@ -1,10 +1,16 @@
-const validId = require('../tools/validator.js').validId
+const validator = require('../tools/validator.js')
 const detailsTool = require('../tools/details.js')
+const addPagination = require('../tools/pagination.js')
 
 module.exports = function ready (req, res, next) {
-  const { type, id, async } = req.query
+  if (!validator.validQuery(req.query)) {
+    return res.status(400).render('error', { error: 'Invalid query' })
+  }
+
+  const { type, id, pageToken } = req.query
   if (!type && !id) return res.render('ready', { url: '', details: null })
-  if (!validId(id)) {
+
+  if (!validator.validId(id)) {
     return res.render('error', { error: 'Invalid id' })
   }
   if (!['video', 'playlist'].includes(type)) {
@@ -15,8 +21,8 @@ module.exports = function ready (req, res, next) {
   if (type === 'video') url = 'https://www.youtube.com/watch?v=' + id
   if (type === 'playlist') url = 'https://www.youtube.com/playlist?list=' + id
 
-  detailsTool(id, type, (err, details) => {
+  detailsTool(id, type, pageToken || '', (err, details) => {
     if (err) return next(err)
-    res.render('ready', { url, details })
+    res.render('ready', { url, details: addPagination(req, details) })
   })
 }

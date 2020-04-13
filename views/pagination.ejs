@@ -1,0 +1,18 @@
+<div class="pagination">
+  <a href="<%= pagination.prev %>"
+     class="<%= pagination.prev ? '' : 'hidden' %>">
+     Previous
+  </a>
+
+  <span>
+    Showing
+    <%= pagination.resultsPerPage %>
+    of
+    <%= pagination.totalResults %>
+  </span>
+
+  <a href="<%= pagination.next %>"
+     class="<%= pagination.next ? '' : 'hidden' %>">
+     Next
+  </a>
+</div>

@@ -47,8 +47,10 @@ function formatQuery (q) {
 
 function normalizeSearchResponse (json) {
   return {
-    // TODO pagination stuff
     type: 'search',
+    nextPageToken: json.nextPageToken,
+    prevPageToken: json.prevPageToken,
+    pageInfo: json.pageInfo,
     entries: json.items.map(item => ({
       id: item.id.videoId || item.id.playlistId,
       type: item.id.kind.replace('youtube#', ''),
@@ -72,8 +74,10 @@ function normalizePlaylistResponse (json) {
 
 function normalizePlaylistItemsResponse (json) {
   return {
-    // TODO pagination stuff
     type: 'playlist',
+    nextPageToken: json.nextPageToken,
+    prevPageToken: json.prevPageToken,
+    pageInfo: json.pageInfo,
     entries: json.items.map(item => ({
       id: item.snippet.resourceId.videoId,
       type: 'video',

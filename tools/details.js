@@ -3,10 +3,11 @@ const api = require('./api.js')
 const conf = require('../conf.js')
 
 // callback in the form (err, details)
-// the details object will be different depending on type
-module.exports = function details (id, type, callback) {
+// The details object will be different depending on type.
+// Assumes the params are legit.
+module.exports = function details (id, type, pageToken, callback) {
   if (type === 'video') return videoDetails(id, callback)
-  else if (type === 'playlist') return playlistDetails(id, callback)
+  else if (type === 'playlist') return playlistDetails(id, pageToken, callback)
   throw Error('Type must be video or playlist')
 }
 
@@ -32,13 +33,13 @@ function videoDetails (id, callback) {
   })
 }
 
-function playlistDetails (id, callback) {
+function playlistDetails (id, pageToken, callback) {
   // Need to call the playlist api to get the title, channel, thumbnail, & description
   // and the playlistItems api to get the videos in the playlist.
   // Call in parallel and join the results at the end.
   Promise.all([
     new Promise((resolve, reject) => {
-      api('playlistItems', { playlistId: id, part: 'snippet' }, (err, result) => {
+      api('playlistItems', { playlistId: id, part: 'snippet', pageToken }, (err, result) => {
         if (err) return reject(err)
         else resolve(result)
       })

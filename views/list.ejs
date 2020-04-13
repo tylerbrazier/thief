@@ -19,3 +19,7 @@
     <hr>
   <% }) %>
 </div>
+
+<% if (list.pagination) { %>
+  <%- include('pagination', { pagination: list.pagination }) %>
+<% } %>

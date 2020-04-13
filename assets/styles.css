@@ -69,3 +69,15 @@ button {
 .file-link {
   margin-bottom: 8px;
 }
+
+.pagination {
+  margin: 8px;
+  text-align: center;
+}
+.pagination > a {
+  margin: 8px;
+}
+
+.hidden {
+  visibility: hidden;
+}
