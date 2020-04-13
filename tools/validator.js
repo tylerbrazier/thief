@@ -8,3 +8,7 @@ exports.validId = function validId (id) {
 exports.validQuery = function validQuery (queryParams) {
   return Object.values(queryParams).every(q => typeof q === 'string')
 }
+
+exports.validFormat = function validFormat (format) {
+  return /^[a-z0-9]+$/.test(format)
+}

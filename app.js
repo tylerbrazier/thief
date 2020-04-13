@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser')
 const serveIndex = require('serve-index')
 const mkdirSync = require('fs').mkdirSync
 const exec = require('child_process').exec
@@ -25,8 +24,7 @@ app.get('/ready', readyRoute)
 
 app.get('/search', searchRoute)
 
-app.use('/download', bodyParser.urlencoded({ extended: true }))
-app.post('/download', downloadRoute)
+app.get('/download', downloadRoute)
 
 app.get('/progress/:id', progressRoute)
 
