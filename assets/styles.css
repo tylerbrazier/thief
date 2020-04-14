@@ -18,14 +18,19 @@ button {
   padding: 4px;
 }
 
-.home-container {
+.center-container {
   /* center on page */
   margin-left: auto;
   margin-right: auto;
   width: fit-content;
 }
-.home-container > form {
-  margin-bottom: 24px;
+.nav-links {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-around;
+}
+.maintenance > form {
+  margin-top: 24px;
 }
 .ready-container {
   display: flex;

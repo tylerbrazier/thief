@@ -15,18 +15,18 @@ Then run:
     npm install
     nodemon app.js
 
+## Production
 To build the docker image and run the container locally:
 
     docker build -t thief .
-    docker run --init -p 80:8080 --env YOUTUBE_API_KEY=... thief
+    docker run --init -p 80:8080 --env YOUTUBE_API_KEY=... --env BASIC_AUTH_CREDS=... thief
 
 - Include `-d` to run in the background
 - Add `--restart=unless-stopped` to run on host startup.
 - If there's networking issues when building/running, add
   `--network host` to the build & run commands and use
-  `--env PORT=80` instead of `-p 80:8080` for run.
+  `--env PORT=80` instead of `-p 80:8080` for the run command.
 
-## Production
 To build and deploy on heroku:
 
     npm version <major|minor|patch>
@@ -36,6 +36,3 @@ To build and deploy on heroku:
     heroku container:release web -a tubethief
 
 <https://devcenter.heroku.com/articles/free-dyno-hours>
-
-## TODO
-- add some kind of `/gc` route to clean up in `/downloads`

@@ -19,6 +19,9 @@ module.exports = {
 
   YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY || '',
 
+  // for maintenance; in the form user:password
+  BASIC_AUTH_CREDS: process.env.BASIC_AUTH_CREDS || '',
+
   // for search results and playlist items
   MAX_PAGE_SIZE: process.env.MAX_PAGE_SIZE || 20
 }

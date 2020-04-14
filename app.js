@@ -3,11 +3,13 @@ const serveIndex = require('serve-index')
 const mkdirSync = require('fs').mkdirSync
 const exec = require('child_process').exec
 const conf = require('./conf.js')
+const authMiddleware = require('./middleware/auth.js')
 const searchRoute = require('./routes/search.js')
 const readyRoute = require('./routes/ready.js')
 const downloadRoute = require('./routes/download.js')
 const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
+const gcRoute = require('./routes/gc.js')
 
 console.debug('NODE_ENV=' + process.env.NODE_ENV)
 
@@ -19,19 +21,17 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => res.render('index', { destRoute: conf.DEST_ROUTE }))
-
 app.get('/ready', readyRoute)
-
 app.get('/search', searchRoute)
-
 app.get('/download', downloadRoute)
-
 app.get('/progress/:id', progressRoute)
 
-app.post('/update', updateRoute)
+app.get('/maintenance', (req, res) => res.render('maintenance'))
+app.get('/update', updateRoute)
+app.use('/gc', authMiddleware)
+app.get('/gc', gcRoute)
 
 app.use('/assets', express.static('assets'))
-
 app.use(conf.DEST_ROUTE, serveIndex(conf.DEST_DIR))
 app.use(conf.DEST_ROUTE, express.static(conf.DEST_DIR))
 

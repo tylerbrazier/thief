@@ -1,6 +1,6 @@
 <%- include('head') %>
 
-<div class="home-container">
+<div class="center-container">
   <h1>Download videos/audio from Youtube</h1>
   <form action="/search">
     <div>
@@ -20,13 +20,8 @@
     </div>
   </form>
 
-  <form action="/update" method="post">
-    <div>
-      <button type="submit">Update youtube-dl</button>
-    </div>
-  </form>
-
-  <div>
+  <div class="nav-links">
     <a href="<%= destRoute %>"><%= destRoute %></a>
+    <a href="/maintenance">/maintenance</a>
   </div>
 </div>
