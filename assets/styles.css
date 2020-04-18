@@ -61,10 +61,11 @@ button {
 }
 
 .details > .thumbnail {
-  max-width: 300px;
+  max-width: min(300px, 100vw);
 }
 .details > .detail {
   margin-top: 4px;
+  overflow-wrap: anywhere;
 }
 
 .keep-newlines {
