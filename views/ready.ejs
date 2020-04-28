@@ -7,11 +7,11 @@
     <h1>Download <%= (details && details.type) || 'by URL' %></h1>
     <div>
       <label for="url">Youtube URL</label>
-      <input type="url" id="url" name="url" value="<%= url %>" autofocus required>
+      <input type="url" id="url" name="url" value="<%= url %>" class="wide" autofocus required>
     </div>
     <div>
       <label for="format">Format</label>
-      <input type="text" id="format" name="format" value="best">
+      <input type="text" id="format" name="format" value="best" class="wide">
     </div>
     <div>
       <input type="checkbox" id="addMeta" name="addMeta" checked>

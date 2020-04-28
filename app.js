@@ -10,6 +10,7 @@ const downloadRoute = require('./routes/download.js')
 const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
 const gcRoute = require('./routes/gc.js')
+const optionsRoute = require('./routes/options.js')
 
 console.debug('NODE_ENV=' + process.env.NODE_ENV)
 
@@ -26,10 +27,12 @@ app.get('/search', searchRoute)
 app.get('/download', downloadRoute)
 app.get('/progress/:id', progressRoute)
 
-app.get('/maintenance', (req, res) => res.render('maintenance'))
+app.get('/maintenance', (req, res) => res.render('maintenance', { conf }))
 app.get('/update', updateRoute)
 app.use('/gc', authMiddleware)
 app.get('/gc', gcRoute)
+app.get('/options', authMiddleware)
+app.get('/options', optionsRoute)
 
 app.use('/assets', express.static('assets'))
 app.use(conf.DEST_ROUTE, serveIndex(conf.DEST_DIR))

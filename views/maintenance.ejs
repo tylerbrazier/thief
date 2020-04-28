@@ -12,4 +12,11 @@
   <form action="/gc">
     <button type="submit">Clear downloads</button>
   </form>
+
+  <form action="/options">
+    <label for="options">Additional youtube-dl options</label><br>
+    <input type="text" name="options" placeholder="e.g. --verbose"
+           value="<%= conf.youtube_dl_options.join(' ') %>">
+    <button type="submit">Set options</button>
+  </form>
 </div>

@@ -83,6 +83,7 @@ module.exports = class Job {
       let outputTemplate = '%(title)s.%(ext)s'
       if (this.isPlaylist) outputTemplate = '%(playlist)s/%(playlist_index)s-' + outputTemplate
       args.push('-o', outputTemplate)
+      args.push(...conf.youtube_dl_options) // add runtime options set in /maintenance
       args.push(this.url.toString())
 
       this.emitter.emit('progress', 'youtube-dl ' + args.join(' '))

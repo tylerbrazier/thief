@@ -23,5 +23,8 @@ module.exports = {
   BASIC_AUTH_CREDS: process.env.BASIC_AUTH_CREDS || '',
 
   // for search results and playlist items
-  MAX_PAGE_SIZE: process.env.MAX_PAGE_SIZE || 20
+  MAX_PAGE_SIZE: process.env.MAX_PAGE_SIZE || 20,
+
+  // set by /options route, not by env so it can be changed at runtime
+  youtube_dl_options: []
 }
