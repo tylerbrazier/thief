@@ -25,6 +25,9 @@ module.exports = {
   // for search results and playlist items
   MAX_PAGE_SIZE: process.env.MAX_PAGE_SIZE || 20,
 
+  // if set, playlists won't be compressed into .tar.gz
+  SKIP_COMPRESSION: process.env.SKIP_COMPRESSION || false,
+
   // set by /options route, not by env so it can be changed at runtime
   youtube_dl_options: []
 }

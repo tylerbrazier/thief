@@ -1,15 +1,10 @@
 const conf = require('../conf.js')
 const KeepAliveEmitter = require('./keepAliveEmitter.js')
 const tar = require('tar')
-const fs = require('fs')
 const { tmpdir } = require('os')
 const { spawn } = require('child_process')
 const { join, basename } = require('path')
-const { promisify } = require('util')
-const pmkdir = promisify(fs.mkdir)
-const preaddir = promisify(fs.readdir)
-const prename = promisify(fs.rename)
-const prmdir = promisify(fs.rmdir)
+const { mkdir, readdir, rename, rmdir } = require('fs').promises
 
 module.exports = class Job {
   constructor (id, options) {
@@ -24,6 +19,7 @@ module.exports = class Job {
     this.progressBuffer = []
     this.emitter = new KeepAliveEmitter()
     // Events from emitter:
+    // info (with json)
     // progress (with text)
     // done (with final filename)
     // error (with Error)
@@ -36,7 +32,7 @@ module.exports = class Job {
 
   async run () {
     try {
-      await pmkdir(this.dir, { recursive: true })
+      await mkdir(this.dir, { recursive: true })
       console.log('Working dir ' + this.dir)
       await this._download({
         url: this.url,
@@ -47,26 +43,8 @@ module.exports = class Job {
         format: this.format,
         emitter: this.emitter
       })
-      if (this.isPlaylist) {
-        const playlistDir = await this._getFirstFilename()
-        if (!playlistDir) throw Error('Unable to find files')
-
-        this.emitter.emit('progress', 'Compressing...')
-        const tgz = await this._compress(join(this.dir, playlistDir))
-
-        await prename(tgz, join(conf.DEST_DIR, basename(tgz)))
-        this.emitter.emit('done', basename(tgz))
-
-        await this._cleanup()
-      } else {
-        const filename = await this._getFirstFilename()
-        if (!filename) throw Error('Unable to find downloaded file')
-
-        await prename(join(this.dir, filename), join(conf.DEST_DIR, filename))
-        this.emitter.emit('done', filename)
-
-        await this._cleanup()
-      }
+      if (this.isPlaylist) await this._postprocessPlaylist()
+      else await this._postprocessSingle()
     } catch (err) {
       this.emitter.emit('error', err.message)
     }
@@ -103,8 +81,43 @@ module.exports = class Job {
     })
   }
 
+  async _postprocessPlaylist () {
+    const playlistDir = await this._getFirstFilename()
+    if (!playlistDir) throw Error('Unable to find files')
+
+    let mvSrc = join(this.dir, playlistDir)
+    let mvDest
+    if (conf.SKIP_COMPRESSION) {
+      mvDest = join(conf.DEST_DIR, playlistDir)
+      // Remove dest if it exists because move will fail if it does
+      // XXX recursive is experimental in node 12
+      // With recursive, no error is thrown if the path doesn't exist
+      await rmdir(mvDest, { recursive: true })
+      this.emitter.emit('info', { uncompressed: true })
+    } else {
+      this.emitter.emit('progress', 'Compressing...')
+      mvSrc = await this._compress(mvSrc)
+      mvDest = join(conf.DEST_DIR, basename(mvSrc))
+    }
+
+    await rename(mvSrc, mvDest)
+    this.emitter.emit('done', basename(mvDest))
+
+    await this._cleanup()
+  }
+
+  async _postprocessSingle () {
+    const filename = await this._getFirstFilename()
+    if (!filename) throw Error('Unable to find downloaded file')
+
+    await rename(join(this.dir, filename), join(conf.DEST_DIR, filename))
+    this.emitter.emit('done', filename)
+
+    await this._cleanup()
+  }
+
   _getFirstFilename () {
-    return preaddir(this.dir).then(entries => entries.pop())
+    return readdir(this.dir).then(entries => entries.pop())
   }
 
   _compress (dir) {
@@ -118,6 +131,6 @@ module.exports = class Job {
 
   _cleanup () {
     console.log('Removing ' + this.dir)
-    return prmdir(this.dir, { recursive: true }) // XXX recursive is experimental in node 12
+    return rmdir(this.dir, { recursive: true }) // XXX recursive is experimental in node 12
   }
 }

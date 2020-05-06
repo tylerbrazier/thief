@@ -2,6 +2,7 @@
 // https://medium.com/conectric-networks/a-look-at-server-sent-events-54a77f8d6ff7
 
 // The server sends the following events types:
+// - info: data field will have json metadata about the download
 // - progress: data field will contain html to output
 // - done: data field will be the route to the file to download
 // - error: data field will contain an error message
@@ -16,6 +17,12 @@
   var eventSource = new EventSource(eventSourceUrl)
 
   output.innerHTML = 'Requesting progress updates...'
+
+  eventSource.addEventListener('info', function (event) {
+    var data = JSON.parse(event.data)
+    // if a playlist was not compressed, make the link just direct to the folder
+    if (data.uncompressed) downloadLink.removeAttribute('download')
+  })
 
   eventSource.addEventListener('progress', function (event) {
     output.innerHTML = event.data + '<br>' + output.innerHTML

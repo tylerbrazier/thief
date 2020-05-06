@@ -2,6 +2,7 @@
 // https://medium.com/conectric-networks/a-look-at-server-sent-events-54a77f8d6ff7
 //
 // The server sends the following events types:
+// - info: data field will have json metadata for the client
 // - progress: data field will contain html to output
 // - done: data field will be the route to the file to download
 // - error: data field will contain an error message
@@ -22,29 +23,33 @@ module.exports = function route (req, res, next) {
 
   // write any buffered messages
   if (job.progressBuffer.length) {
-    const data = job.progressBuffer.map(formatForEvent).join('<br>')
+    const data = job.progressBuffer.map(formatForHtml).join('<br>')
     res.write(`event: progress\ndata: ${data}\n\n`)
   }
 
+  job.emitter.on('info', json => {
+    res.write(`event: info\ndata: ${JSON.stringify(json)}\n\n`)
+  })
+
   job.emitter.on('progress', message => {
-    res.write(`event: progress\ndata: ${formatForEvent(message)}\n\n`)
+    res.write(`event: progress\ndata: ${formatForHtml(message)}\n\n`)
   })
 
   job.emitter.on('error', err => {
-    res.write(`event: error\ndata: ${formatForEvent(err.message || err)}\n\n`)
+    res.write(`event: error\ndata: ${formatForHtml(err.message || err)}\n\n`)
     res.end()
   })
 
   job.emitter.on('done', filename => {
     const fileRoute = `${conf.DEST_ROUTE}/${filename}`
-    res.write(`event: done\ndata: ${formatForEvent(fileRoute)}\n\n`)
+    res.write(`event: done\ndata: ${formatForHtml(fileRoute)}\n\n`)
     res.end()
   })
 
   req.on('close', () => res.end())
 }
 
-function formatForEvent (text) {
+function formatForHtml (text) {
   if (!text) return ''
   return text
     .replace(/&/g, '&amp')
