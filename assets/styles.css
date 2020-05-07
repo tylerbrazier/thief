@@ -17,6 +17,9 @@ button {
   padding: 4px;
 }
 
+.large {
+  font-size: large;
+}
 .wide {
   width: 100%;
 }

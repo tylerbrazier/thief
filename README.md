@@ -38,5 +38,4 @@ To build and deploy on heroku:
 <https://devcenter.heroku.com/articles/free-dyno-hours>
 
 ## TODO
-- custom serve-index template including home link
 - allow setting `--playlist-items`

@@ -1,4 +1,5 @@
 const express = require('express')
+const ejs = require('ejs')
 const serveIndex = require('serve-index')
 const mkdirSync = require('fs').mkdirSync
 const exec = require('child_process').exec
@@ -35,8 +36,12 @@ app.get('/options', authMiddleware)
 app.get('/options', optionsRoute)
 
 app.use('/assets', express.static('assets'))
-app.use(conf.DEST_ROUTE, serveIndex(conf.DEST_DIR))
 app.use(conf.DEST_ROUTE, express.static(conf.DEST_DIR))
+app.use(conf.DEST_ROUTE, serveIndex(conf.DEST_DIR, {
+  template: (locals, callback) => {
+    ejs.renderFile('./views/files.ejs', locals, { views: './views' }, callback)
+  }
+}))
 
 // not found route
 app.use((req, res, next) => {

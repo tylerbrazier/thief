@@ -1,0 +1,17 @@
+<%- include('head') %>
+
+<div class="home-link">Back to <a href="/">home</a></div>
+
+<div class="center-container">
+  <h1><%= directory %></h1>
+
+  <div>
+    <% for (var f of fileList) { %>
+      <div class="file-link large">
+        <a href="<%= directory + f.name %>">
+          <%= f.name + (f.stat.isDirectory() ? '/' : '') %>
+        </a>
+      </div>
+    <% } %>
+  </div>
+</div>
