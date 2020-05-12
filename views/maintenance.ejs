@@ -14,7 +14,12 @@
   </form>
 
   <form action="/options">
-    <label for="options">Additional youtube-dl options</label><br>
+    <label for="options">
+      Additional
+      <a href="https://github.com/ytdl-org/youtube-dl/blob/master/README.md#options"
+         target="_blank">youtube-dl options</a>
+    </label>
+    <br>
     <input type="text" name="options" placeholder="e.g. --verbose"
            value="<%= conf.youtube_dl_options.join(' ') %>">
     <button type="submit">Set options</button>
