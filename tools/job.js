@@ -1,10 +1,11 @@
 const conf = require('../conf.js')
 const KeepAliveEmitter = require('./keepAliveEmitter.js')
 const tar = require('tar')
-const { tmpdir } = require('os')
-const { spawn } = require('child_process')
-const { join, basename } = require('path')
-const { mkdir, readdir, rename, rmdir } = require('fs').promises
+const spawn = require('child_process').spawn
+const { join, basename, dirname } = require('path')
+
+const destinationRegex = /^\[.+?\] Destination: (\S+)/
+const alreadyDownloadedRegex = /^\[.+?\] (\S+) has already been downloaded/
 
 module.exports = class Job {
   constructor (id, options) {
@@ -14,10 +15,10 @@ module.exports = class Job {
     this.audioOnly = options.audioOnly
     this.format = options.format
     this.ignoreErrors = options.ignoreErrors
-    this.dir = join(tmpdir(), id)
     this.isPlaylist = options.url.pathname.startsWith('/playlist')
-    this.progressBuffer = []
+    this.progressBuffer = [] // used by /progress route
     this.emitter = new KeepAliveEmitter()
+    this.destFile = null // will be set by _checkForDestination()
     // Events from emitter:
     // info (with json)
     // progress (with text)
@@ -25,6 +26,7 @@ module.exports = class Job {
     // error (with Error)
 
     this.emitter.on('progress', data => this.progressBuffer.push(data))
+    this.emitter.on('progress', data => this._checkForDestination(data))
     this.emitter.on('progress', console.log)
     this.emitter.on('done', console.log)
     this.emitter.on('error', console.error)
@@ -32,19 +34,10 @@ module.exports = class Job {
 
   async run () {
     try {
-      await mkdir(this.dir, { recursive: true })
-      console.log('Working dir ' + this.dir)
-      await this._download({
-        url: this.url,
-        dir: this.dir,
-        withInfo: this.isPlaylist,
-        addMeta: this.addMeta,
-        audioOnly: this.audioOnly,
-        format: this.format,
-        emitter: this.emitter
-      })
+      await this._download()
+      if (!this.destFile) throw Error('Could not determine output file name')
       if (this.isPlaylist) await this._postprocessPlaylist()
-      else await this._postprocessSingle()
+      this.emitter.emit('done', this.destFile)
     } catch (err) {
       this.emitter.emit('error', err.message)
     }
@@ -65,7 +58,7 @@ module.exports = class Job {
       args.push(this.url.toString())
 
       this.emitter.emit('progress', 'youtube-dl ' + args.join(' '))
-      const proc = spawn(conf.YOUTUBE_DL_EXE, args, { cwd: this.dir })
+      const proc = spawn(conf.YOUTUBE_DL_EXE, args, { cwd: conf.DEST_DIR })
 
       // wire up event emitting
       const ondata = data => this.emitter.emit('progress', data.toString().trim())
@@ -82,55 +75,36 @@ module.exports = class Job {
   }
 
   async _postprocessPlaylist () {
-    const playlistDir = await this._getFirstFilename()
-    if (!playlistDir) throw Error('Unable to find files')
-
-    let mvSrc = join(this.dir, playlistDir)
-    let mvDest
     if (conf.SKIP_COMPRESSION) {
-      mvDest = join(conf.DEST_DIR, playlistDir)
-      // Remove dest if it exists because move will fail if it does
-      // XXX recursive is experimental in node 12
-      // With recursive, no error is thrown if the path doesn't exist
-      await rmdir(mvDest, { recursive: true })
       this.emitter.emit('info', { uncompressed: true })
     } else {
+      const dirPath = join(conf.DEST_DIR, this.destFile)
       this.emitter.emit('progress', 'Compressing...')
-      mvSrc = await this._compress(mvSrc)
-      mvDest = join(conf.DEST_DIR, basename(mvSrc))
+      this.destFile = await this._compress(dirPath)
     }
-
-    await rename(mvSrc, mvDest)
-    this.emitter.emit('done', basename(mvDest))
-
-    await this._cleanup()
   }
 
-  async _postprocessSingle () {
-    const filename = await this._getFirstFilename()
-    if (!filename) throw Error('Unable to find downloaded file')
-
-    await rename(join(this.dir, filename), join(conf.DEST_DIR, filename))
-    this.emitter.emit('done', filename)
-
-    await this._cleanup()
+  _checkForDestination (eventData) {
+    // parse youtube-dl output to figure out what the resulting filename (or directory) is
+    const match = eventData.match(destinationRegex) || eventData.match(alreadyDownloadedRegex)
+    if (!match) return
+    if (!match[1]) return console.error('ERROR Unable to capture filename from ' + eventData)
+    if (this.isPlaylist) {
+      // output template puts the file in a directory so that will be our destination.
+      const dir = dirname(match[1])
+      if (dir === '.') return console.error('ERROR Unable to get dirname of ' + match[1])
+      this.destFile = dir
+    } else {
+      this.destFile = match[1]
+    }
   }
 
-  _getFirstFilename () {
-    return readdir(this.dir).then(entries => entries.pop())
-  }
-
-  _compress (dir) {
+  _compress (dir) { // dir is expected to be an absolute path
     const filepath = dir + '.tar.gz'
     return tar.c({
       gzip: true,
       cwd: join(dir, '..'),
       file: filepath
-    }, [basename(dir)]).then(() => filepath)
-  }
-
-  _cleanup () {
-    console.log('Removing ' + this.dir)
-    return rmdir(this.dir, { recursive: true }) // XXX recursive is experimental in node 12
+    }, [basename(dir)]).then(() => basename(filepath))
   }
 }
