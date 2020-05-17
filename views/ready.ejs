@@ -9,9 +9,15 @@
       <label for="url">Youtube URL</label>
       <input type="url" id="url" name="url" value="<%= url %>" class="wide" autofocus required>
     </div>
-    <div>
-      <label for="format">Format</label>
-      <input type="text" id="format" name="format" value="best" class="wide">
+    <div class="ready-option-fields">
+      <div>
+        <label for="format" class="block">Format</label>
+        <input type="text" id="format" name="format" value="best" class="wide">
+      </div>
+      <div>
+        <label for="playlistItems" class="block">Playlist selection</label>
+        <input type="text" id="playlistItems" name="playlistItems" placeholder="e.g. 2,4-6,9" class="wide">
+      </div>
     </div>
     <div>
       <input type="checkbox" id="addMeta" name="addMeta" checked>

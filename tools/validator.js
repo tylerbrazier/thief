@@ -10,5 +10,10 @@ exports.validQuery = function validQuery (queryParams) {
 }
 
 exports.validFormat = function validFormat (format) {
-  return /^[a-z0-9]+$/.test(format)
+  return /^[a-z0-9]*$/.test(format)
+}
+
+exports.validPlaylistItems = function validPlaylistItems (input) {
+  // https://github.com/ytdl-org/youtube-dl/blob/master/README.md#video-selection
+  return /^[\d,-]*$/.test(input)
 }

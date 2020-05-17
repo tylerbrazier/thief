@@ -43,6 +43,13 @@ button {
   flex-wrap: wrap;
   justify-content: space-evenly;
 }
+.ready-option-fields {
+  display: flex;
+}
+.ready-option-fields div:nth-child(1) {
+  margin-right: 10px;
+}
+
 .home-link {
   margin-top: 18px;
   margin-bottom: 18px;
@@ -92,4 +99,7 @@ button {
 
 .hidden {
   visibility: hidden;
+}
+.block {
+  display: block;
 }

@@ -14,6 +14,7 @@ module.exports = class Job {
     this.addMeta = options.addMeta
     this.audioOnly = options.audioOnly
     this.format = options.format
+    this.playlistItems = options.playlistItems
     this.ignoreErrors = options.ignoreErrors
     this.isPlaylist = options.url.pathname.startsWith('/playlist')
     this.progressBuffer = [] // used by /progress route
@@ -45,13 +46,17 @@ module.exports = class Job {
 
   _download () {
     return new Promise((resolve, reject) => {
+      let outputTemplate = '%(title)s.%(ext)s'
       const args = ['--restrict-filenames', '--newline']
       if (this.addMeta) args.push('--add-metadata')
-      if (this.audioOnly) args.push('-x')
-      if (this.audioOnly) args.push('--audio-format', this.format)
       if (this.ignoreErrors) args.push('--ignore-errors')
-      else args.push('--format', this.format)
-      let outputTemplate = '%(title)s.%(ext)s'
+      if (this.playlistItems) args.push('--playlist-items', this.playlistItems)
+      if (this.audioOnly) {
+        args.push('-x')
+        if (this.format) args.push('--audio-format', this.format)
+      } else if (this.format) {
+        args.push('--format', this.format)
+      }
       if (this.isPlaylist) outputTemplate = '%(playlist)s/%(playlist_index)s-' + outputTemplate
       args.push('-o', outputTemplate)
       args.push(...conf.youtube_dl_options) // add runtime options set in /maintenance
