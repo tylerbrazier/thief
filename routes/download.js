@@ -13,7 +13,9 @@ module.exports = function route (req, res, next) {
 
   if (!validFormat(req.query.format)) return badRequest(res, 'Invalid format')
 
-  if (!validPlaylistItems(req.query.playlistItems)) return badRequest(res, 'Invalid playlist selection')
+  if (!validPlaylistItems(req.query['playlist-items'])) {
+    return badRequest(res, 'Invalid playlist selection')
+  }
 
   const id = pool.create(Object.assign({}, req.query, { url }))
   res.render('download', { eventSourceUrl: '/progress/' + id, destRoute: conf.DEST_ROUTE })

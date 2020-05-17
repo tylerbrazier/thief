@@ -12,7 +12,7 @@
 
 (function () {
   var output = document.getElementById('output')
-  var eventSourceUrl = document.getElementById('eventSourceUrl').value
+  var eventSourceUrl = document.getElementById('event-source-url').value
   var downloadLink = document.getElementById('download')
   var eventSource = new EventSource(eventSourceUrl)
 

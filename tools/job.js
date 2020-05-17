@@ -11,11 +11,11 @@ module.exports = class Job {
   constructor (id, options) {
     this.id = id
     this.url = options.url
-    this.addMeta = options.addMeta
-    this.audioOnly = options.audioOnly
     this.format = options.format
-    this.playlistItems = options.playlistItems
-    this.ignoreErrors = options.ignoreErrors
+    this.addMeta = options['add-meta']
+    this.audioOnly = options['audio-only']
+    this.playlistItems = options['playlist-items']
+    this.ignoreErrors = options['ignore-errors']
     this.isPlaylist = options.url.pathname.startsWith('/playlist')
     this.progressBuffer = [] // used by /progress route
     this.emitter = new KeepAliveEmitter()
