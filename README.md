@@ -36,3 +36,7 @@ To build and deploy on heroku:
     heroku container:release web -a tubethief
 
 <https://devcenter.heroku.com/articles/free-dyno-hours>
+
+## TODO
+- possibly send all SSE as json (would eliminate need for info event)
+- cancel download button

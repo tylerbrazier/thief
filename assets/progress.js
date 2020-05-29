@@ -11,6 +11,7 @@
 /* eslint-env browser */
 
 (function () {
+  var percentCompleteRegex = /^\[download\] +[\d.]+%/
   var output = document.getElementById('output')
   var eventSourceUrl = document.getElementById('event-source-url').value
   var downloadLink = document.getElementById('download')
@@ -25,7 +26,14 @@
   })
 
   eventSource.addEventListener('progress', function (event) {
-    output.innerHTML = event.data + '<br>' + output.innerHTML
+    // if the message is download percentage, update latest message if it was also percentage
+    if (percentCompleteRegex.test(event.data)) {
+      setPercentageMessage(event.data)
+    } else {
+      var d = document.createElement('div')
+      d.innerHTML = event.data
+      output.prepend(d)
+    }
   })
 
   eventSource.addEventListener('done', function (event) {
@@ -39,4 +47,16 @@
     output.innerHTML = '<span class="error">' + message + '</span><br>' + output.innerHTML
     eventSource.close()
   })
+
+  function setPercentageMessage (newMessage) {
+    var previousMessage = output.firstChild
+    if (previousMessage && previousMessage.classList.contains('percentage')) {
+      previousMessage.innerHTML = newMessage
+    } else {
+      var d = document.createElement('div')
+      d.classList.add('percentage')
+      d.innerHTML = newMessage
+      output.prepend(d)
+    }
+  }
 }())
