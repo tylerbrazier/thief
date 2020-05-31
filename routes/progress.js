@@ -2,58 +2,43 @@
 // https://medium.com/conectric-networks/a-look-at-server-sent-events-54a77f8d6ff7
 //
 // The server sends the following events types:
-// - info: data field will have json metadata for the client
-// - progress: data field will contain html to output
-// - done: data field will be the route to the file to download
-// - error: data field will contain an error message
+// - progress: data field will be { message: '<output to show>', error: true/false }
+// - done: data field will be { link: '<route to the file to download>', uncompressed: true/false }
+// - error: data field will be { message: '<error message>' }
 // When the client receives the 'done' or 'error' event he should close the connection.
 
 const pool = require('../tools/jobPool.js')
-const conf = require('../conf.js')
 
 module.exports = function route (req, res, next) {
-  const job = pool.lookup(req.params.id)
-  if (!job) return next(Error('No job with id ' + req.params.id))
-
   res.writeHead(200, {
     Connection: 'keep-alive',
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache'
   })
 
-  // write any buffered messages
-  if (job.progressBuffer.length) {
-    const data = job.progressBuffer.map(formatForHtml).join('<br>')
-    res.write(`event: progress\ndata: ${data}\n\n`)
+  const job = pool.lookup(req.params.id)
+  if (!job) {
+    const err = { message: 'No download in progress' }
+    res.write(`event: error\ndata: ${JSON.stringify(err)}\n\n`)
+    res.end()
+    return
   }
 
-  job.emitter.on('info', json => {
-    res.write(`event: info\ndata: ${JSON.stringify(json)}\n\n`)
-  })
+  // write any buffered messages
+  job.progressBuffer.forEach(json => res.write(`event: progress\ndata: ${JSON.stringify(json)}\n\n`))
 
-  job.emitter.on('progress', message => {
-    res.write(`event: progress\ndata: ${formatForHtml(message)}\n\n`)
-  })
+  job.emitter.on('progress', json => res.write(`event: progress\ndata: ${JSON.stringify(json)}\n\n`))
 
   job.emitter.on('error', err => {
-    res.write(`event: error\ndata: ${formatForHtml(err.message || err)}\n\n`)
+    // JSON.stringify() doesn't work on Error objects
+    res.write(`event: error\ndata: ${JSON.stringify({ message: err.message || err })}\n\n`)
     res.end()
   })
 
-  job.emitter.on('done', filename => {
-    const fileRoute = `${conf.DEST_ROUTE}/${filename}`
-    res.write(`event: done\ndata: ${formatForHtml(fileRoute)}\n\n`)
+  job.emitter.on('done', json => {
+    res.write(`event: done\ndata: ${JSON.stringify(json)}\n\n`)
     res.end()
   })
 
   req.on('close', () => res.end())
-}
-
-function formatForHtml (text) {
-  if (!text) return ''
-  return text
-    .replace(/&/g, '&amp')
-    .replace(/>/g, '&gt')
-    .replace(/</g, '&lt')
-    .replace(/\n+/g, '<br>')
 }

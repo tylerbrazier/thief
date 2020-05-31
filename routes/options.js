@@ -10,5 +10,5 @@ module.exports = function route (req, res, next) {
   // the filter will remove empty strings from the result
   conf.youtube_dl_options = (req.query.options || '').split(' ').filter(v => !!v)
 
-  res.render('message', { message: 'youtube-dl options: ' + conf.youtube_dl_options.join(' ') })
+  res.render('message', { message: 'youtube-dl options set: ' + conf.youtube_dl_options.join(' ') })
 }

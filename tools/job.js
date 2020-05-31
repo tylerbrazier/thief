@@ -21,26 +21,28 @@ module.exports = class Job {
     this.emitter = new KeepAliveEmitter()
     this.destFile = null // will be set by _checkForDestination()
     // Events from emitter:
-    // info (with json)
     // progress (with text)
     // done (with final filename)
     // error (with Error)
 
-    this.emitter.on('progress', data => this.progressBuffer.push(data))
-    this.emitter.on('progress', data => this._checkForDestination(data))
-    this.emitter.on('progress', console.log)
-    this.emitter.on('done', console.log)
-    this.emitter.on('error', console.error)
+    this.emitter.on('progress', json => this.progressBuffer.push(json))
+    this.emitter.on('progress', json => this._checkForDestination(json.message))
+    this.emitter.on('progress', json => console.log('progress:', json))
+    this.emitter.on('done', json => console.log('done:', json))
+    this.emitter.on('error', err => console.log('error:', err))
   }
 
   async run () {
     try {
       await this._download()
       if (!this.destFile) throw Error('Could not determine output file name')
-      if (this.isPlaylist) await this._postprocessPlaylist()
-      this.emitter.emit('done', this.destFile)
+      if (this.isPlaylist && !conf.SKIP_COMPRESSION) await this._compress()
+      this.emitter.emit('done', {
+        link: `${conf.DEST_ROUTE}/${this.destFile}`,
+        uncompressed: this.isPlaylist && conf.SKIP_COMPRESSION
+      })
     } catch (err) {
-      this.emitter.emit('error', err.message)
+      this.emitter.emit('error', err)
     }
   }
 
@@ -62,31 +64,34 @@ module.exports = class Job {
       args.push(...conf.youtube_dl_options) // add runtime options set in /maintenance
       args.push(this.url.toString())
 
-      this.emitter.emit('progress', 'youtube-dl ' + args.join(' '))
+      this.emitter.emit('progress', { message: 'youtube-dl ' + args.join(' ') })
       const proc = spawn(conf.YOUTUBE_DL_EXE, args, { cwd: conf.DEST_DIR })
 
       // wire up event emitting
-      const ondata = data => this.emitter.emit('progress', data.toString().trim())
-      proc.stdout.on('data', ondata)
-      proc.stderr.on('data', ondata)
+      proc.stdout.on('data', d => this.emitter.emit('progress', { message: d.toString().trim() }))
+      proc.stderr.on('data', d => this.emitter.emit('progress', {
+        message: d.toString().trim(),
+        error: true
+      }))
       proc.on('error', reject)
       proc.on('close', (code) => {
         if (code === 0 || this.ignoreErrors) {
-          this.emitter.emit('progress', 'Finished downloading')
+          this.emitter.emit('progress', { message: 'Finished downloading' })
           resolve()
         } else reject(Error('youtube-dl exited with ' + code))
       })
     })
   }
 
-  async _postprocessPlaylist () {
-    if (conf.SKIP_COMPRESSION) {
-      this.emitter.emit('info', { uncompressed: true })
-    } else {
-      const dirPath = join(conf.DEST_DIR, this.destFile)
-      this.emitter.emit('progress', 'Compressing...')
-      this.destFile = await this._compress(dirPath)
-    }
+  async _compress () {
+    this.emitter.emit('progress', { message: 'Compressing...' })
+    const filepath = join(conf.DEST_DIR, this.destFile) + '.tar.gz'
+    await tar.c({
+      gzip: true,
+      cwd: conf.DEST_DIR,
+      file: filepath
+    }, [this.destFile])
+    this.destFile = basename(filepath)
   }
 
   _checkForDestination (eventData) {
@@ -102,14 +107,5 @@ module.exports = class Job {
     } else {
       this.destFile = match[1]
     }
-  }
-
-  _compress (dir) { // dir is expected to be an absolute path
-    const filepath = dir + '.tar.gz'
-    return tar.c({
-      gzip: true,
-      cwd: join(dir, '..'),
-      file: filepath
-    }, [basename(dir)]).then(() => basename(filepath))
   }
 }

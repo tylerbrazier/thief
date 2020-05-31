@@ -11,7 +11,6 @@ module.exports = class KeepAliveEmitter extends EventEmitter {
     this.delay = delay
     this.message = message
     this.timeout = null
-    this.on('info', this.restartTimer)
     this.on('progress', this.restartTimer)
     this.on('error', this.cancelTimer)
     this.on('done', this.cancelTimer)
