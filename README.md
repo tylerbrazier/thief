@@ -11,9 +11,8 @@ Get `youtube-dl` from <http://ytdl-org.github.io/youtube-dl/download.html>
 
 Then run:
 
-    sudo npm install -g nodemon  # if you don't have it
     npm install
-    nodemon app.js
+    npm run dev
 
 ## Production
 To build the docker image and run the container locally:

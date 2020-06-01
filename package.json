@@ -12,9 +12,11 @@
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
+    "nodemon": "^2.0.4",
     "standard": "^14.3.3"
   },
   "scripts": {
+    "dev": "nodemon app.js",
     "lint": "standard",
     "preversion": "npm run lint",
     "postversion": "git push && git push --tags",
