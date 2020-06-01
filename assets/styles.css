@@ -35,6 +35,10 @@ button {
   display: flex;
   justify-content: space-around;
 }
+.version {
+  margin-top: 24px;
+  text-align: center;
+}
 .maintenance > form {
   margin-top: 24px;
 }

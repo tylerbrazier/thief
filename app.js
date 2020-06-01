@@ -12,6 +12,7 @@ const progressRoute = require('./routes/progress.js')
 const updateRoute = require('./routes/update.js')
 const gcRoute = require('./routes/gc.js')
 const optionsRoute = require('./routes/options.js')
+const version = require('./package.json').version
 
 console.debug('NODE_ENV=' + process.env.NODE_ENV)
 
@@ -22,7 +23,7 @@ const app = express()
 app.set('views', './views')
 app.set('view engine', 'ejs')
 
-app.get('/', (req, res) => res.render('index', { destRoute: conf.DEST_ROUTE }))
+app.get('/', (req, res) => res.render('index', { destRoute: conf.DEST_ROUTE, version }))
 app.get('/ready', readyRoute)
 app.get('/search', searchRoute)
 app.get('/download', downloadRoute)
