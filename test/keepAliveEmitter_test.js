@@ -16,16 +16,16 @@ async function main () {
 async function testTimerResets () {
   const emitter = new KeepAliveEmitter(100, 'test')
   try {
-    emitter.emit('progress', 'initial event to start timer')
+    emitter.emit('progress', { message: 'initial event to start timer' })
 
-    emitter.on('progress', message => {
-      if (message === 'test') assert.fail('keep-alive should not have fired')
+    emitter.on('progress', event => {
+      if (event.message === 'test') assert.fail('keep-alive should not have fired')
     })
 
     await wait(70)
-    emitter.emit('progress', 'should reset timer')
+    emitter.emit('progress', { message: 'should reset timer' })
     await wait(70)
-    emitter.emit('progress', 'should reset timer')
+    emitter.emit('progress', { message: 'should reset timer' })
     await wait(70)
 
     console.log('testTimerResets passed')
@@ -37,9 +37,9 @@ async function testTimerResets () {
 async function testKeepAliveFires () {
   const emitter = new KeepAliveEmitter(100, 'test')
   try {
-    emitter.emit('progress', 'initial event to start timer')
+    emitter.emit('progress', { message: 'initial event to start timer' })
     const messages = []
-    emitter.on('progress', message => messages.push(message))
+    emitter.on('progress', event => messages.push(event.message))
 
     await wait(150)
     assert.equal(messages.length, 1)

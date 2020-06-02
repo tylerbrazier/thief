@@ -26,6 +26,6 @@ module.exports = class KeepAliveEmitter extends EventEmitter {
   }
 
   ping () {
-    this.emit('progress', this.message)
+    this.emit('progress', { message: this.message })
   }
 }
