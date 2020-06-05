@@ -18,7 +18,7 @@ module.exports = function route (req, res, next) {
   }
 
   const id = pool.create(Object.assign({}, req.query, { url }))
-  res.render('download', { eventSourceUrl: '/progress/' + id, destRoute: conf.DEST_ROUTE })
+  res.render('download', { downloadId: id, destRoute: conf.DEST_ROUTE })
 }
 
 function badRequest (res, message) {

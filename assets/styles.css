@@ -17,6 +17,10 @@ button {
   padding: 4px;
 }
 
+#download-control {
+  margin-bottom: 8px;
+}
+
 .large {
   font-size: large;
 }
@@ -87,10 +91,6 @@ button {
 
 .keep-newlines {
   white-space: pre-line;
-}
-
-.file-link {
-  margin-bottom: 8px;
 }
 
 .pagination {

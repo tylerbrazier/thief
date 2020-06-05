@@ -20,6 +20,7 @@ module.exports = class Job {
     this.progressBuffer = [] // used by /progress route
     this.emitter = new KeepAliveEmitter()
     this.destFile = null // will be set by _checkForDestination()
+    this.proc = null // will be set by _download()
     // Events from emitter:
     // progress (with text)
     // done (with final filename)
@@ -46,6 +47,12 @@ module.exports = class Job {
     }
   }
 
+  cancel () {
+    // kill() returns true or false
+    console.log('Cancel request received for ' + this.id)
+    return this.proc ? this.proc.kill() : false
+  }
+
   _download () {
     return new Promise((resolve, reject) => {
       let outputTemplate = '%(title)s.%(ext)s'
@@ -65,20 +72,22 @@ module.exports = class Job {
       args.push(this.url.toString())
 
       this.emitter.emit('progress', { message: 'youtube-dl ' + args.join(' ') })
-      const proc = spawn(conf.YOUTUBE_DL_EXE, args, { cwd: conf.DEST_DIR })
+      this.proc = spawn(conf.YOUTUBE_DL_EXE, args, { cwd: conf.DEST_DIR })
 
       // wire up event emitting
-      proc.stdout.on('data', d => this.emitter.emit('progress', { message: d.toString().trim() }))
-      proc.stderr.on('data', d => this.emitter.emit('progress', {
+      this.proc.stdout.on('data', d => this.emitter.emit('progress', { message: d.toString().trim() }))
+      this.proc.stderr.on('data', d => this.emitter.emit('progress', {
         message: d.toString().trim(),
         error: true
       }))
-      proc.on('error', reject)
-      proc.on('close', (code) => {
+      this.proc.on('error', reject)
+      this.proc.on('close', (code, signal) => {
         if (code === 0 || this.ignoreErrors) {
           this.emitter.emit('progress', { message: 'Finished downloading' })
           resolve()
-        } else reject(Error('youtube-dl exited with ' + code))
+        } else {
+          reject(Error(`youtube-dl exited (${code || signal})`))
+        }
       })
     })
   }

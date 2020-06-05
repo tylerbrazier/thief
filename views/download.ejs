@@ -2,14 +2,14 @@
 
 <div class="home-link">Back to <a href="/">home</a></div>
 
-<input type="hidden" id="event-source-url" value="<%= eventSourceUrl %>">
-
 <noscript>
   Progress updates requires javascript. File will be here when finished:
   <a href="<%= destRoute %>"><%= destRoute %></a>
 </noscript>
 
-<div class="file-link"><a id="download" href="" download></a></div>
+<input type="hidden" id="download-id" value="<%= downloadId %>">
+
+<div id="download-control"></div>
 
 <div id="output"></div>
 
