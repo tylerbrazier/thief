@@ -4,8 +4,8 @@ const tar = require('tar')
 const spawn = require('child_process').spawn
 const { join, basename, dirname } = require('path')
 
-const destinationRegex = /^\[.+?\] Destination: (\S+)/
-const alreadyDownloadedRegex = /^\[.+?\] (\S+) has already been downloaded/
+const destinationRegex = /\[.+?\] Destination: (\S+)/
+const alreadyDownloadedRegex = /\[.+?\] (\S+) has already been downloaded/
 
 module.exports = class Job {
   constructor (id, options) {
