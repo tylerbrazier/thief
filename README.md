@@ -35,3 +35,8 @@ To build and deploy on heroku:
     heroku container:release web -a tubethief
 
 <https://devcenter.heroku.com/articles/free-dyno-hours>
+
+## TODO
+- number playlist entries
+- keep localstorage memory of downloaded songs and offer to skip them when downloading a playlist
+- persist playlist selection when paging thru a playlist on /ready (may require js? unless the next button is a form submit?)
