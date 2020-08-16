@@ -5,6 +5,7 @@
 
 const https = require('https')
 const conf = require('../conf.js')
+const debuglog = require('util').debuglog('api')
 
 // route is either 'search' or 'playlist' or 'playlistItems'
 // q is an object of query params (api key automatically added)
@@ -14,13 +15,13 @@ module.exports = function api (route, q, callback) {
   q.maxResults = conf.MAX_PAGE_SIZE
   const url = `https://www.googleapis.com/youtube/v3/${route}?${formatQuery(q)}`
 
+  debuglog('GET', url)
   https.get(url, res => {
     let payload = ''
     res.setEncoding('utf8')
     res.on('data', chunk => { payload += chunk })
     res.on('end', () => {
-      // console.debug(url)
-      // console.debug(payload)
+      debuglog('Response from GET ' + url, payload)
       try {
         if (res.statusCode !== 200) return callback(Error(payload))
         const json = JSON.parse(payload)

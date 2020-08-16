@@ -1,11 +1,12 @@
 const tmpdir = require('os').tmpdir
 const join = require('path').join
+const debuglog = require('util').debuglog('conf')
 
 // load development settings from .env
 // https://github.com/motdotla/dotenv#readme
 if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 
-module.exports = {
+const conf = {
   PORT: process.env.PORT || 8080,
 
   // where downloads are saved
@@ -31,3 +32,7 @@ module.exports = {
   // set by /options route, not by env so it can be changed at runtime
   youtube_dl_options: []
 }
+
+debuglog(conf)
+
+module.exports = conf

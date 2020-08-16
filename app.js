@@ -15,7 +15,8 @@ const gcRoute = require('./routes/gc.js')
 const optionsRoute = require('./routes/options.js')
 const version = require('./package.json').version
 
-console.debug('NODE_ENV=' + process.env.NODE_ENV)
+console.debug('NODE_ENV', process.env.NODE_ENV)
+console.debug('NODE_DEBUG', process.env.NODE_DEBUG)
 
 if (!conf.YOUTUBE_API_KEY) console.warn('WARNING: NO YOUTUBE_API_KEY')
 

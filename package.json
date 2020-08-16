@@ -16,7 +16,7 @@
     "standard": "^14.3.3"
   },
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "NODE_DEBUG=conf,api nodemon app.js",
     "lint": "standard",
     "preversion": "npm run lint",
     "postversion": "git push && git push --tags",
