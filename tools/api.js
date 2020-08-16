@@ -83,7 +83,8 @@ function normalizePlaylistItemsResponse (json) {
       id: item.snippet.resourceId.videoId,
       type: 'video',
       title: item.snippet.title,
-      thumbnail: item.snippet.thumbnails.default.url
+      thumbnail: item.snippet.thumbnails.default.url,
+      position: item.snippet.position + 1 // add one because youtube-dl playlist selection starts at 1
       // exclude channelTitle because it's not guaranteed to match uploader
     }))
   }

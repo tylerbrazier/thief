@@ -4,6 +4,7 @@
       <img src="<%= details.thumbnail %>" alt="thumbnail" width="120" height="90">
       <div class="info">
         <div class="title">
+          <%= details.position ? details.position + '.' : '' %>
           <a class="details-link" href="/ready?id=<%= details.id %>&type=<%= details.type %>">
             <%= details.title %>
           </a>
