@@ -66,7 +66,10 @@ module.exports = class Job {
       } else if (this.format) {
         args.push('--format', this.format)
       }
-      if (this.isPlaylist) outputTemplate = '%(playlist)s/%(playlist_index)s-' + outputTemplate
+      if (this.isPlaylist) {
+        const selection = this.playlistItems ? `_${this.playlistItems}` : ''
+        outputTemplate = `%(playlist)s${selection}/%(playlist_index)s-${outputTemplate}`
+      }
       args.push('-o', outputTemplate)
       args.push(...conf.youtube_dl_options) // add runtime options set in /maintenance
       args.push(this.url.toString())
