@@ -1,6 +1,7 @@
 # https://nodejs.org/en/docs/guides/nodejs-docker-webapp/
 
-FROM node:12-alpine
+# https://docs.docker.com/engine/reference/commandline/pull/#pull-an-image-by-digest-immutable-identifier
+FROM node:12.18.3-alpine@sha256:c8efbb31ceea05eb063ce1e598593237c73735ee0055190b8d8c48f0176b5721
 
 WORKDIR /usr/src/app
 
@@ -12,7 +13,7 @@ RUN chmod a+rx /usr/local/bin/youtube-dl
 
 # install deps first to take advantage of layer caching
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --production && npm cache clean --force
 
 # copy the app sources
 COPY . .
