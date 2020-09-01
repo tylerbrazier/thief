@@ -39,3 +39,4 @@ To build and deploy on heroku:
 ## TODO
 - keep localstorage memory of downloaded songs and offer to skip them when downloading a playlist
 - persist playlist selection when paging thru a playlist on /ready (may require js? unless the next button is a form submit?)
+- put download options in each search entry using `<details>` html tag to avoid having to wait when clicking a search result (with this, the whole UI/flow could be redesigned)
