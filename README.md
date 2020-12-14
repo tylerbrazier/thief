@@ -2,6 +2,10 @@
 
 Web service for downloading youtube videos and songs.
 
+**Discontinued development/archived**
+because I found it easier to use youtube-dl directly
+(actually youtube-dlc since youtube-dl was taken down).
+
 ## Development
 First go to <https://console.cloud.google.com/>,
 create a project, enable youtube v3 api, and add an API key;
